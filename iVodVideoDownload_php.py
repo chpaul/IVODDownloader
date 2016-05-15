@@ -1,15 +1,21 @@
 # -*- coding: utf-8 -*-
+#iVod影片下載handler
 import urllib2,sys,re,os
 from PyQt4.QtGui import * 
 from PyQt4.QtCore import * 
 reload(sys)
 sys.setdefaultencoding('utf8')
 
+#必須更改為php的安裝目錄
 phplocation  = 'D:\\tmp\\php-5.5.32-Win32-VC11-x86\\'
-
+#輸入參數
+#argURLandFileNameList list[str,str] #  下載位置 和 檔名 List[URL,FileName]
+#argSaveFolder : str # 下載目錄
+#argHD : boolean # 是否下載高畫質
+#argQTStatus : QTextBrowser # 顯示進度的控制項
 class iVodVideoDownload(QMainWindow):
     def __init__(self, argURLandFileNameList, argSaveFolder, argHD, argQTStatus):   
-        QWidget.__init__(self)       
+        QWidget.__init__(self)               
         self.SaveFolder = argSaveFolder
         self.QtStatus = argQTStatus
         self.Manifest = []
@@ -52,10 +58,10 @@ class iVodVideoDownload(QMainWindow):
             #call php
             self.callAdobeHDS(manifest[1],tempFileName)
             
+            #更新QT元件
             while self.running:               
-                QApplication.processEvents()
-            
-            
+                QApplication.processEvents()            
+            #轉換下載名稱 若有重複更改新下載名
             while(os.path.isfile(FileName)):
                 FileName = FileName[0:-4] + "_1.flv" 
             os.rename(tempFileName,FileName)   
@@ -65,7 +71,7 @@ class iVodVideoDownload(QMainWindow):
         self.process.start(phplocation +"php.exe",["AdobeHDS_billy3321.php","--quality","high","--useragent", self.header['User-agent'],'--delete','--outfile',tmpFileLocation,'--manifest',manifestURL])#, shell=True, stdout=subprocess.PIPE)        
         
         
-    def finish(self):
+    def finish(self):        
         self.running = False
     
     def dataReady(self):
@@ -75,7 +81,7 @@ class iVodVideoDownload(QMainWindow):
         self.QtStatus.ensureCursorVisible()
 
 
-
+#獨立測試區塊
 #global mainForm
 #def button_click():
 #    status = mainForm.findChild(QTextBrowser,"Status");

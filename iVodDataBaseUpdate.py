@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+#資料庫更新
 # -*- coding: utf-8 -*-
 import os, urllib, urllib2, json, cookielib, sys, random, time, datetime, subprocess
 import io,os.path,unicodedata,shutil,sqlite3
@@ -35,16 +36,15 @@ class iVodDataBaseUpdate(object):
     #http://stackoverflow.com/questions/2677617/python-f-write-at-beginning-of-file
 
     @staticmethod
-    def reset_cookie():
-        
+    def reset_cookie():        
         #if time lagger then 15 min, will reset.
         if time.time() - iVodDataBaseUpdate.currect_time > 900:
             iVodDataBaseUpdate.currect_time = time.time()
             http_header = {'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)', 'Host': 'ivod.ly.gov.tw'}
             req = urllib2.Request('http://ivod.ly.gov.tw/', None, http_header)
             web = urllib2.urlopen(req)
-            result = web.read()
-            #print result
+            result = web.read()            
+
     @staticmethod
     def get_committ_date_list(comt, start_date=None, end_date=None):
         http_header = {'Referer': 'http://ivod.ly.gov.tw/Committee', 
@@ -74,8 +74,7 @@ class iVodDataBaseUpdate(object):
             return date_list
         else:
             return False
-        #except:
-        #    return False
+        
     @staticmethod
     def get_movie_by_date(comit, date, page=1):
         http_header = {'Referer': 'http://ivod.ly.gov.tw/Committee', 
@@ -97,6 +96,7 @@ class iVodDataBaseUpdate(object):
             #Find WZS_ID
         else:
             return False
+
     @staticmethod
     def get_movie_url(wzs_id, t, quality='w'):
         if t == 'whole':
@@ -111,17 +111,18 @@ class iVodDataBaseUpdate(object):
             return 'http://ivod.ly.gov.tw/Play/%s/%s/300K' % (url_part, wzs_id)
         else:
             return False
+
     @staticmethod
     def random_sleep():
         return
         time.sleep(random.randint(1,5))
-
-
     
+    #更新資料庫
     def startUpdate(self):
         db_con = sqlite3.connect(str(self.dbLocation))
         Full_Result_By_MeetingDate ={}
         MeetingDaylimit =self.MeetingDaylimit
+        #log 檔案
         logFile = open ('./log.txt','a');
     
         logFile.write("----------------------------Start Time:"+strftime("%Y-%m-%d %H:%M:%S", time.localtime())+"-------------------------" +os.linesep)
@@ -189,7 +190,7 @@ class iVodDataBaseUpdate(object):
         logFile.write( "----------------------------End Time:"+strftime("%Y-%m-%d %H:%M:%S", time.localtime())+"-------------------------" +os.linesep)
         logFile.flush();
         logFile.close();
-        self.qtStatus.append ("done")
+        self.qtStatus.append (unicode("更新完成")
 
     
     

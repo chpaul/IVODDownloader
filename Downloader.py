@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# iVodDownloader程式進入點
 import sys
 reload(sys)
 sys.setdefaultencoding('utf8')

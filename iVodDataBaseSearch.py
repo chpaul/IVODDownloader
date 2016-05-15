@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+#資料庫搜尋
 import sys,os.path
 reload(sys)
 sys.setdefaultencoding('utf8')

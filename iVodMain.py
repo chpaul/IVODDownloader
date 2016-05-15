@@ -1,4 +1,5 @@
 ﻿# -*- coding: utf-8 -*-
+#主要Form 包含UI 
 import sys,webbrowser,os
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -16,15 +17,12 @@ class iVodMain(QtGui.QWidget):
         self.resize(800,400);
         self.setWindowTitle(unicode('iVod 下載器'))
         self.tabs = QtGui.QTabWidget()
-        self.tabSearch = QtGui.QWidget()
-        
-        self.tabDBUpdate = QtGui.QWidget()
-        
-        self.tabDownload = QtGui.QWidget()
-        
-        
-        self.tabDownloadStatus = QtGui.QWidget()
 
+        self.tabSearch = QtGui.QWidget()        
+        self.tabDBUpdate = QtGui.QWidget()        
+        self.tabDownload = QtGui.QWidget()    
+        self.tabDownloadStatus = QtGui.QWidget()
+        
         self.tabs.addTab(self.tabSearch,unicode("會議查詢"))        
         self.tabs.addTab(self.tabDownload,unicode("影片下載"))
         self.tabs.addTab(self.tabDownloadStatus,unicode("影片下載進度"))
@@ -33,9 +31,7 @@ class iVodMain(QtGui.QWidget):
      
         # 搜尋tab
         Searchlayout = QtGui.QVBoxLayout()        
-        Searchlayout.setAlignment(QtCore.Qt.AlignTop)        
-        
-        #Searchlayout.addWidget(QtGui.QLabel(unicode('會議查詢日期')))
+        Searchlayout.setAlignment(QtCore.Qt.AlignTop)                       
         
         DateLayout = QtGui.QHBoxLayout()
         DateLayout.addWidget(QtGui.QLabel(unicode('開始時間:')),0,QtCore.Qt.AlignRight)
@@ -50,15 +46,15 @@ class iVodMain(QtGui.QWidget):
         self.chkAllCommittee.stateChanged.connect(self.chkAllCommittee_click)        
         Searchlayout.addWidget(self.chkAllCommittee,2,QtCore.Qt.AlignHCenter)
         
-        
-        self.lstCheckBoxs = [];
+        #委員會控制項List
+        self.lstCheckBoxs = [];        
         for CoName in lstCommitteeName:
             chkBox = QtGui.QCheckBox(CoName)
             self.lstCheckBoxs.append(chkBox)
            
         CommitteeGridLayout = QtGui.QGridLayout()
         CommitteeGridLayout.addWidget(self.lstCheckBoxs[0],2,0)
-        
+        #委員會checkbox控制項位置 
         for i in range(1,10):
             x = 0
             y = 0
@@ -68,8 +64,7 @@ class iVodMain(QtGui.QWidget):
             else:
                 x = (i / 3)+1
                 y = i % 3+1
-            CommitteeGridLayout.addWidget(self.lstCheckBoxs[i],x,y);
-        
+            CommitteeGridLayout.addWidget(self.lstCheckBoxs[i],x,y);       
         
 
         Searchlayout.addLayout(CommitteeGridLayout)
@@ -77,8 +72,8 @@ class iVodMain(QtGui.QWidget):
         self.btnSearch.clicked.connect(self.btnSearch_click)
         Searchlayout.addWidget(self.btnSearch)
         self.tabSearch.setLayout(Searchlayout)
-        #下載選擇tab
-        
+
+        #下載選擇tab        
         downloadlayout = QtGui.QVBoxLayout()
         downloadlayout.addWidget(QtGui.QLabel(unicode("委員發言片段(雙擊打開立院網頁)")))
         self.IndividualDataTable = QtGui.QTableWidget() 
@@ -154,13 +149,14 @@ class iVodMain(QtGui.QWidget):
         
 
         #Fill data
+        #指定資料庫位置
         if (os.path.isfile('./iVOD_LY.sqlite')):
             self.dbLocation.setText('./iVOD_LY.sqlite')
         else:
             self.dbLocation.setText('')
         self.SetupDateSearch()
 
-
+    #讀取資料庫把搜尋的條件填入控制項
     def SetupDateSearch(self):
         
         db_con = sqlite3.connect('./iVOD_LY.sqlite')
@@ -176,10 +172,12 @@ class iVodMain(QtGui.QWidget):
             QtGui.QMessageBox.information(self,unicode("錯誤"),unicode("資料庫為空!請先更新資料庫後重新啟動程式"))
         db_con.close()
 
+    #全勾選控制項 Event
     def chkAllCommittee_click(self):    
         for chkBox in self.lstCheckBoxs:
             chkBox.setChecked(self.chkAllCommittee.checkState()) 
-       
+
+    #搜尋按鈕 Event
     def btnSearch_click(self):
        
         StartTime = str(self.cboStartTime.currentText()) + ' 00:00:00'
@@ -225,6 +223,7 @@ class iVodMain(QtGui.QWidget):
             self.FullDataTable.setItem(rowPosition,5,QtGui.QTableWidgetItem("http://ivod.ly.gov.tw/Play/Full/"+str(row[8])+"/300K"))            
         self.tabs.setCurrentIndex(1)       
 
+    #下載按鈕 Event 呼叫iVodVideoDownload_php 進行下載
     def btnDownloand_click(self):
         selectID =[] # URL , FileName
         for row in xrange(self.IndividualDataTable.rowCount()):
@@ -243,6 +242,7 @@ class iVodMain(QtGui.QWidget):
             downlaod = iVodVideoDownload_php.iVodVideoDownload(selectID,folder,self.chkHD.isChecked(),self.txtblkDownloadStatus)
             downlaod.downloadFile()
 
+    #雙擊data table 直接開啟瀏覽器到iVod網站
     def cellDataTable_DBclick(self,row,column):        
         if (self.sender() == self.FullDataTable):
             URL = self.FullDataTable.item(row,5).text()        
@@ -250,6 +250,7 @@ class iVodMain(QtGui.QWidget):
             URL = self.IndividualDataTable.item(row,7).text()        
         webbrowser.open_new(URL)
 
+    #更新資料庫按鈕 Event 呼叫 iVodDataBaseUpdate
     def btnUpdateDB_click(self):             
         DBUpdater = iVodDataBaseUpdate.iVodDataBaseUpdate(self.dbLocation.text(),self.maxUpdateNumber.text(), self.status)
         QtGui.QMessageBox.information(self,unicode('開始更新'),unicode('開始更新最新%s天資料' % str(self.maxUpdateNumber.text())))
