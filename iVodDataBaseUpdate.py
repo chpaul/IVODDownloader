@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-#資料庫更新
 # -*- coding: utf-8 -*-
+#資料庫更新
 import os, urllib, urllib2, json, cookielib, sys, random, time, datetime, subprocess
 import io,os.path,unicodedata,shutil,sqlite3
 from time import gmtime, strftime
@@ -188,9 +187,9 @@ class iVodDataBaseUpdate(object):
                         iVodDataBaseUpdate.random_sleep()
                 db_con.commit()
         logFile.write( "----------------------------End Time:"+strftime("%Y-%m-%d %H:%M:%S", time.localtime())+"-------------------------" +os.linesep)
-        logFile.flush();
-        logFile.close();
-        self.qtStatus.append (unicode("更新完成")
+        logFile.flush()
+        logFile.close()
+        self.qtStatus.append (u"更新完成")
 
     
     
