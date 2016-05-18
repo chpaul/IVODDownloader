@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 #主要Form 包含UI 
 import sys,webbrowser,os
 reload(sys)
@@ -74,8 +74,8 @@ class iVodMain(QtGui.QWidget):
         self.tabSearch.setLayout(Searchlayout)
 
         #下載選擇tab        
-        downloadlayout = QtGui.QVBoxLayout()
-        downloadlayout.addWidget(QtGui.QLabel(unicode("委員發言片段(雙擊打開立院網頁)")))
+        downloadLayout = QtGui.QVBoxLayout()
+        downloadLayout.addWidget(QtGui.QLabel(unicode("委員發言片段(雙擊打開立院網頁)")))
         self.IndividualDataTable = QtGui.QTableWidget() 
         self.IndividualDataTable.setColumnCount(8)     
         self.IndividualDataTable.setHorizontalHeaderLabels([unicode("下載"),unicode("開會日期"),unicode("發言時間"), unicode("委員會"),unicode("會期"),unicode("發言人"),unicode("會議內容"),unicode("iVOD 連結")])       
@@ -88,9 +88,9 @@ class iVodMain(QtGui.QWidget):
         self.IndividualDataTable.setColumnWidth(5,50)
         self.IndividualDataTable.setColumnWidth(6,130)
         self.IndividualDataTable.setColumnWidth(7,235)
-        downloadlayout.addWidget(self.IndividualDataTable)
+        downloadLayout.addWidget(self.IndividualDataTable)
 
-        downloadlayout.addWidget(QtGui.QLabel(unicode("會議完整錄影(雙擊打開立院網頁)")))
+        downloadLayout.addWidget(QtGui.QLabel(unicode("會議完整錄影(雙擊打開立院網頁)")))
         self.FullDataTable = QtGui.QTableWidget() 
         self.FullDataTable.setColumnCount(6)     
         self.FullDataTable.setHorizontalHeaderLabels([unicode("下載"),unicode("開會日期"), unicode("委員會"),unicode("會期"),unicode("會議內容"),unicode("iVOD 連結")])       
@@ -101,7 +101,7 @@ class iVodMain(QtGui.QWidget):
         self.FullDataTable.setColumnWidth(3,50)
         self.FullDataTable.setColumnWidth(4,220)
         self.FullDataTable.setColumnWidth(5,225)
-        downloadlayout.addWidget(self.FullDataTable)
+        downloadLayout.addWidget(self.FullDataTable)
 
         downloadButtonLayout = QtGui.QHBoxLayout()
         
@@ -111,11 +111,11 @@ class iVodMain(QtGui.QWidget):
         self.chkHD =QtGui.QCheckBox(unicode("下載高畫質 1M"))
         self.chkHD.setCheckState(True)
         downloadButtonLayout.addWidget(self.chkHD)
-        downloadlayout.addLayout(downloadButtonLayout)
-        self.tabDownload.setLayout(downloadlayout)
+        downloadLayout.addLayout(downloadButtonLayout)
+        self.tabDownload.setLayout(downloadLayout)
 
         #下載進度tab
-        self.txtblkDownloadStatus = QtGui.QTextEdit()
+        self.txtblkDownloadStatus = QtGui.QTextBrowser()
         downloadStatusLayout = QtGui.QVBoxLayout()
         downloadStatusLayout.addWidget(self.txtblkDownloadStatus)
         self.tabDownloadStatus.setLayout(downloadStatusLayout)
@@ -130,17 +130,17 @@ class iVodMain(QtGui.QWidget):
         self.maxUpdateNumber.setText('3')
         self.maxUpdateNumber.setObjectName("maxUpdateNumber")
         self.status = QtGui.QTextBrowser()
-        DBlayout = QtGui.QGridLayout()
-        DBlayout.addWidget(QtGui.QLabel('Database Location:'),0,0)
-        DBlayout.addWidget(self.dbLocation,0,1,1,3)
-        DBlayout.addWidget(QtGui.QLabel('Update number:'),1,0)
-        DBlayout.addWidget(self.maxUpdateNumber,1,1,1,1)
-        DBlayout.addWidget(btnUpdateDB,1,3)        
-        DBlayout.addWidget(self.status,2,1,3,3)        
+        dbLayout = QtGui.QGridLayout()
+        dbLayout.addWidget(QtGui.QLabel('Database Location:'),0,0)
+        dbLayout.addWidget(self.dbLocation,0,1,1,3)
+        dbLayout.addWidget(QtGui.QLabel('Update number:'),1,0)
+        dbLayout.addWidget(self.maxUpdateNumber,1,1,1,1)
+        dbLayout.addWidget(btnUpdateDB,1,3)
+        dbLayout.addWidget(self.status,2,1,3,3)
         
         btnUpdateDB.clicked.connect(self.btnUpdateDB_click)
 
-        self.tabDBUpdate.setLayout(DBlayout)
+        self.tabDBUpdate.setLayout(dbLayout)
 
         #TabControl
         mainLayout = QtGui.QVBoxLayout()
@@ -164,6 +164,8 @@ class iVodMain(QtGui.QWidget):
         cur.execute("Select Distinct ST_time from (SELECT DISTINCT substr(ST_TIM,1,10) as ST_time FROM iVOD_Lglt union SELECT DISTINCT substr(ST_TIM,1,10) as ST_time FROM iVOD_FullMeeting)order by ST_time DESC")
         MeetingTimeRecord = cur.fetchall()
         if len(MeetingTimeRecord) !=0 :
+            self.cboEndTime.clear()
+            self.cboStartTime.clear()
             for row in MeetingTimeRecord:
                 self.cboStartTime.addItem(str(row[0]))
                 self.cboEndTime.addItem(str(row[0]))
@@ -235,8 +237,16 @@ class iVodMain(QtGui.QWidget):
             if QtGui.QTableWidgetItem(self.FullDataTable.item(row,0)).checkState() == QtCore.Qt.Checked:
                 fileName = unicode(self.FullDataTable.item(row,2).text()) + "_" + unicode(self.FullDataTable.item(row,1).text()) +".flv"
                 selectID.append([str(self.FullDataTable.item(row,5).text()),fileName])
-        reply = QtGui.QMessageBox.question(self,unicode("下載清單"),"\n".join([row[1] for row in selectID]),QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
-        if reply ==QtGui.QMessageBox.Yes:   
+        reply = QtGui.QMessageBox.question(self,unicode("下載清單"),"\n".join([row[1] for row in selectID]),QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)        
+        if reply ==QtGui.QMessageBox.Yes:
+            #Clean checkbox
+            for row in xrange(self.IndividualDataTable.rowCount()):
+                QtGui.QTableWidgetItem(self.IndividualDataTable.item(row, 0)).setCheckState( False)
+            # Clean checkbox
+            for row in xrange(self.FullDataTable.rowCount()):
+                QtGui.QTableWidgetItem(self.FullDataTable.item(row, 0)).setCheckState(False)
+            #Clean QtStatus
+            self.txtblkDownloadStatus.setText('')
             folder = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Directory"))
             self.tabs.setCurrentIndex(2)    
             downlaod = iVodVideoDownload_php.iVodVideoDownload(selectID,folder,self.chkHD.isChecked(),self.txtblkDownloadStatus)
@@ -256,5 +266,5 @@ class iVodMain(QtGui.QWidget):
         QtGui.QMessageBox.information(self,unicode('開始更新'),unicode('開始更新最新%s天資料' % str(self.maxUpdateNumber.text())))
         DBUpdater.startUpdate()
         QtGui.QMessageBox.information(self,unicode('更新完成'),unicode('OK'))
-
-
+        #Refetch data into form
+        self.SetupDateSearch()
