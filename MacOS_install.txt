@@ -1,0 +1,30 @@
+1. install homebrew
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+
+2. install php55-mycypt
+brew install homebrew/php/php55-mcrypt
+
+
+To finish installing mcrypt for PHP 5.5:
+  * /usr/local/etc/php/5.5/conf.d/ext-mcrypt.ini was created,
+    do not forget to remove it upon extension removal.
+  * Validate installation via one of the following methods:
+  *
+  * Using PHP from a webserver:
+  * - Restart your webserver.
+  * - Write a PHP page that calls "phpinfo();"
+  * - Load it in a browser and look for the info on the mcrypt module.
+  * - If you see it, you have been successful!
+  *
+  * Using PHP from the command line:
+  * - Run `php -i "(command-line 'phpinfo()')"`
+  * - Look for the info on the mcrypt module.
+  * - If you see it, you have been successful!
+
+php --info | grep mcrypt\\.
+
+3. install pyQT
+	3.1 brew install pyqt
+	3.2 map library folder
+			mkdir -p /Users/{usrename}/Library/Python/2.7/lib/python/site-packages
+			echo 'import site; site.addsitedir("/usr/local/lib/python2.7/site-packages")' >> /Users/{username}/Library/Python/2.7/lib/python/site-packages/homebrew.pth
