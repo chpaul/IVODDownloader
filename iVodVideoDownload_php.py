@@ -86,7 +86,7 @@ class iVodVideoDownload(QMainWindow):
     def callAdobeHDS(self, manifestURL, tmpFileLocation):
         self.running = True
         self.process.start(phpExecutionPath,
-                           ["AdobeHDS_billy3321.php", "--quality", "high", "--useragent", self.header['User-agent'],
+                           ["AdobeHDS.php", "--quality", "high", "--useragent", self.header['User-agent'],
                             '--delete', '--outfile', tmpFileLocation, '--manifest',
                             manifestURL])  # , shell=True, stdout=subprocess.PIPE)
 

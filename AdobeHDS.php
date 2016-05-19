@@ -1,5 +1,4 @@
 <?php
-  //https://raw.githubusercontent.com/cic-tw/ivod-downloader/master/AdobeHDS.php
   define('AUDIO', 0x08);
   define('VIDEO', 0x09);
   define('AKAMAI_ENC_AUDIO', 0x0A);
