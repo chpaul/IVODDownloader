@@ -237,18 +237,26 @@ class iVodMain(QtGui.QWidget):
             if QtGui.QTableWidgetItem(self.FullDataTable.item(row,0)).checkState() == QtCore.Qt.Checked:
                 fileName = unicode(self.FullDataTable.item(row,2).text()) + "_" + unicode(self.FullDataTable.item(row,1).text()) +".flv"
                 selectID.append([str(self.FullDataTable.item(row,5).text()),fileName])
-        reply = QtGui.QMessageBox.question(self,unicode("下載清單"),"\n".join([row[1] for row in selectID]),QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)        
+        reply = QtGui.QMessageBox.question(self,unicode("下載清單"),"\n".join([row[1] for row in selectID]),QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
         if reply ==QtGui.QMessageBox.Yes:
             #Clean checkbox
             for row in xrange(self.IndividualDataTable.rowCount()):
-                QtGui.QTableWidgetItem(self.IndividualDataTable.item(row, 0)).setCheckState( False)
+                chkBoxItem = QtGui.QTableWidgetItem()
+                chkBoxItem.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+                chkBoxItem.setCheckState(QtCore.Qt.Unchecked)
+                chkBoxItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.IndividualDataTable.setItem(row, 0, chkBoxItem)
             # Clean checkbox
             for row in xrange(self.FullDataTable.rowCount()):
-                QtGui.QTableWidgetItem(self.FullDataTable.item(row, 0)).setCheckState(False)
+                chkBoxItem = QtGui.QTableWidgetItem()
+                chkBoxItem.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
+                chkBoxItem.setCheckState(QtCore.Qt.Unchecked)
+                chkBoxItem.setTextAlignment(QtCore.Qt.AlignCenter)
+                self.FullDataTable.setItem(row, 0, chkBoxItem)
             #Clean QtStatus
             self.txtblkDownloadStatus.setText('')
             folder = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Directory"))
-            self.tabs.setCurrentIndex(2)    
+            self.tabs.setCurrentIndex(2)
             downlaod = iVodVideoDownload_php.iVodVideoDownload(selectID,folder,self.chkHD.isChecked(),self.txtblkDownloadStatus)
             downlaod.downloadFile()
 
