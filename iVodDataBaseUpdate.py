@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 #資料庫更新
 import os, urllib, urllib2, json, cookielib, sys, random, time, datetime, subprocess

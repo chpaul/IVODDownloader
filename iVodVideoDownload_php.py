@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # iVod影片下載handler
 import urllib2, sys, re, os, xml.etree.ElementTree, subprocess as sp
@@ -6,8 +7,7 @@ from PyQt4.QtCore import *
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-e = xml.etree.ElementTree.parse('setting.xml').getroot()
-phpExecutionPath =e.findall('phpLocation')[0].text
+
 # 輸入參數
 # argURLandFileNameList list[str,str] #  下載位置 和 檔名 List[URL,FileName]
 # argSaveFolder : str # 下載目錄
@@ -15,7 +15,9 @@ phpExecutionPath =e.findall('phpLocation')[0].text
 # argQTStatus : QTextBrowser # 顯示進度的控制項
 class iVodVideoDownload(QMainWindow):
     def __init__(self, argURLandFileNameList, argSaveFolder, argHD, argQTStatus):
-        if not self.hasPHP(phpExecutionPath):
+        e = xml.etree.ElementTree.parse('setting.xml').getroot()
+        self.phpExecutionPath = e.findall('phpLocation')[0].text
+        if not self.hasPHP(self.phpExecutionPath):
             raise Exception("Can't find PHP; please install PHP and change location above")
         QWidget.__init__(self)
         self.SaveFolder = argSaveFolder
@@ -48,7 +50,7 @@ class iVodVideoDownload(QMainWindow):
 
     def downloadFile(self):
         downloadfailed = []
-        self.QtStatus.append(unicode('PHP Location:') + phpExecutionPath)
+        self.QtStatus.append(unicode('PHP Location:') + self.phpExecutionPath)
         for manifest in self.Manifest:
             tempFileName = self.SaveFolder + "/tmp.flv"
             FileName = manifest[2]
@@ -85,7 +87,7 @@ class iVodVideoDownload(QMainWindow):
 
     def callAdobeHDS(self, manifestURL, tmpFileLocation):
         self.running = True
-        self.process.start(phpExecutionPath,
+        self.process.start(self.phpExecutionPath,
                            ["AdobeHDS.php", "--quality", "high", "--useragent", self.header['User-agent'],
                             '--delete', '--outfile', tmpFileLocation, '--manifest',
                             manifestURL])  # , shell=True, stdout=subprocess.PIPE)
