@@ -107,7 +107,7 @@ class iVodMain(QtGui.QWidget):
         self.FullDataTable.setColumnWidth(1, 110)
         self.FullDataTable.setColumnWidth(2, 80)
         self.FullDataTable.setColumnWidth(3, 50)
-        self.FullDataTable.setColumnWidth(4, 220)
+        self.FullDataTable.setColumnWidth(4, 210)
         self.FullDataTable.setColumnWidth(5, 225)
         downloadLayout.addWidget(self.FullDataTable)
 
@@ -198,7 +198,7 @@ class iVodMain(QtGui.QWidget):
         IndividualDataRoes = DBSearch.SearchIndividual()
         self.IndividualDataTable.cellDoubleClicked.connect(self.cellDataTable_DBclick)    
         for row in IndividualDataRoes:
-            rowPosition = self.FullDataTable.rowCount()
+            rowPosition = self.IndividualDataTable.rowCount()
             chkBoxItem = QtGui.QTableWidgetItem()
             chkBoxItem.setFlags(QtCore.Qt.ItemIsUserCheckable | QtCore.Qt.ItemIsEnabled)
             chkBoxItem.setCheckState(QtCore.Qt.Unchecked)  

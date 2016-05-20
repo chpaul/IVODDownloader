@@ -8,12 +8,12 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-class iVodDataBaseUpdate(object):     
+class iVodDataBaseUpdate(object):
     currect_time =0
     dbLocation = ''
-    MeetingDaylimit = 1    
+    MeetingDaylimit = 1
     base_url = 'http://ivod.ly.gov.tw/'
-    committee_url = 'http://ivod.ly.gov.tw/Committee/CommsDate'    
+    committee_url = 'http://ivod.ly.gov.tw/Committee/CommsDate'
     committee ={
         '19':{'name': u'院會', 'code': 'YS'},
         '1':{'name': u'內政', 'code': 'IAD'},
@@ -29,27 +29,27 @@ class iVodDataBaseUpdate(object):
 
     def __init__(self,argDBLocation, argMeetingDaylimit,argQTStatus):
         self.currect_time = 0
-        self.dbLocation =argDBLocation   
+        self.dbLocation =argDBLocation
         self.MeetingDaylimit = argMeetingDaylimit
         self.qtStatus =argQTStatus
 
     #http://stackoverflow.com/questions/2677617/python-f-write-at-beginning-of-file
 
     @staticmethod
-    def reset_cookie():        
+    def reset_cookie():
         #if time lagger then 15 min, will reset.
         if time.time() - iVodDataBaseUpdate.currect_time > 900:
             iVodDataBaseUpdate.currect_time = time.time()
             http_header = {'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)', 'Host': 'ivod.ly.gov.tw'}
             req = urllib2.Request('http://ivod.ly.gov.tw/', None, http_header)
             web = urllib2.urlopen(req)
-            result = web.read()            
+            result = web.read()
 
     @staticmethod
     def get_committ_date_list(comt, start_date=None, end_date=None):
-        http_header = {'Referer': 'http://ivod.ly.gov.tw/Committee', 
+        http_header = {'Referer': 'http://ivod.ly.gov.tw/Committee',
             'Accept': '*/*',
-            'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)', 
+            'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
             'Host': 'ivod.ly.gov.tw',
             'Connection': 'keep-alive',
             'X-Requested-With': 'XMLHttpRequest',
@@ -74,12 +74,12 @@ class iVodDataBaseUpdate(object):
             return date_list
         else:
             return False
-        
+
     @staticmethod
     def get_movie_by_date(comit, date, page=1):
-        http_header = {'Referer': 'http://ivod.ly.gov.tw/Committee', 
+        http_header = {'Referer': 'http://ivod.ly.gov.tw/Committee',
             'Accept': '*/*',
-            'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)', 
+            'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
             'Host': 'ivod.ly.gov.tw',
             'Connection': 'keep-alive',
             'X-Requested-With': 'XMLHttpRequest',
@@ -116,7 +116,7 @@ class iVodDataBaseUpdate(object):
     def random_sleep():
         return
         time.sleep(random.randint(1,5))
-    
+
     #更新資料庫
     def startUpdate(self):
         db_con = sqlite3.connect(str(self.dbLocation))
@@ -124,14 +124,14 @@ class iVodDataBaseUpdate(object):
         MeetingDaylimit =self.MeetingDaylimit
         #log 檔案
         logFile = open ('./log.txt','a');
-    
+
         logFile.write("----------------------------Start Time:"+strftime("%Y-%m-%d %H:%M:%S", time.localtime())+"-------------------------" +os.linesep)
         logFile.flush()
-    
+
         iVodDataBaseUpdate.reset_cookie()
-        for comit_id in self.committee.keys():        
+        for comit_id in self.committee.keys():
             iVodDataBaseUpdate.reset_cookie()
-            self.qtStatus.append(u'開始掃描%s委員會可以抓取的影片...' % self.committee[comit_id]['name'])            
+            self.qtStatus.append(u'開始掃描%s委員會可以抓取的影片...' % self.committee[comit_id]['name'])
             QCoreApplication.processEvents()
             #print(u'開始掃描%s委員會可以抓取的影片...' % self.committee[comit_id]['name'])
             logFile.write("Check " + self.committee[comit_id]['name']   +os.linesep)
@@ -142,9 +142,9 @@ class iVodDataBaseUpdate(object):
             #    if(not Full_Result_By_MeetingDate.has_key(date)):
             #        Full_Result_By_MeetingDate[date] = {};
             #        List_MeetingDate.append(date)
-        
+
             #for dateIdx in range(0,len(date_list)):#抓全部
-            for dateIdx in range(0,int(MeetingDaylimit)):      
+            for dateIdx in range(0,int(MeetingDaylimit)):
                 date = date_list[dateIdx]
 
                 iVodDataBaseUpdate.reset_cookie()
@@ -155,14 +155,14 @@ class iVodDataBaseUpdate(object):
                 QCoreApplication.processEvents()
                 #print(date)
                 for i in movie_list['full']:
-                    cur = db_con.cursor()                    
+                    cur = db_con.cursor()
                     cur.execute("Select * from iVOD_FullMeeting where MEREID=" + i['MEREID'])
-                    IsRecordFound = cur.fetchone()                   
+                    IsRecordFound = cur.fetchone()
                     if IsRecordFound != None:
                         continue
-                
+
                     iVOD_Full = i['CM_NAM'],int(i['DUTION']),i['ENCNAM'],bool(i['HFILEA']),bool(i['HFILEB']),bool(i['LFILEA']),bool(i['LFILEB']),int(i['MEETID']),int(i['MEREID']),i['METDEC'],bool(i['MFILEA']),bool(i['MFILEB']),i['RECNAM'],datetime.datetime.fromtimestamp(time.mktime( time.strptime(str(i['ST_TIM']),"%Y-%m-%d %H:%M"))),int(i['STAGE_'])
-                    cur.execute("Insert into iVOD_FullMeeting(CM_NAM,DUTION,ENCNAM,HFILEA,HFILEB,LFILEA,LFILEB,MEETID,MEREID,METDEC,MFILEA,MFILEB,RECNAM,ST_TIM,STAGE_) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(iVOD_Full))                
+                    cur.execute("Insert into iVOD_FullMeeting(CM_NAM,DUTION,ENCNAM,HFILEA,HFILEB,LFILEA,LFILEB,MEETID,MEREID,METDEC,MFILEA,MFILEB,RECNAM,ST_TIM,STAGE_) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(iVOD_Full))
                     logFile.write("\t- add full " + date + os.linesep)
                     logFile.flush()
                     iVodDataBaseUpdate.random_sleep()
@@ -178,10 +178,10 @@ class iVodDataBaseUpdate(object):
                         db_con.commit()
                         if IsRecordFound != None:
                             continue
-                    
+
                         iVOD_data= int(i['WZS_ID']),i['CH_NAM'],i['CLP_ST'],i['CLP_ET'],i['CM_NAM'],i['COMTST'],int(i['DUTION']),i['EN_NAM'],i['ENCNAM'],i['FILNAM'],bool(i['HFILEA']),bool(i['HFILEB']),bool(i['LFILEA']),bool(i['LFILEB']),i['LGLTIM'],int(i['MEETID']),i['METDEC'],bool(i['MFILEA']),bool(i['MFILEB']),i['MOVTIM'],i['PHOTO_'],bool(i['PUBLIC']),datetime.datetime.fromtimestamp(time.mktime( time.strptime(str(i['ST_TIM']),"%Y-%m-%d %H:%M"))),int(i['STAGE_']),i['SYS_ST'],i['SYS_ET']
                         cur.execute("Insert into iVOD_lglt(WZS_ID,CH_NAM,CLP_ST,CLP_ET,CM_NAM,COMTST,DUTION,EN_NAM,ENCNAM,FILNAM,HFILEA,HFILEB,LFILEA,LFILEB,LGLTIM,MEETID,METDEC,MFILEA,MFILEB,MOVTIM,PHOTO_,PUBLIC,ST_TIM,STAGE_,SYS_ST,SYS_ET) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(iVOD_data))
-                    
+
                         #iVOD_dataList =iVOD_dataList,iVOD_data
                         logFile.write("\t-add personal "+ i['CH_NAM'] + " " + date + os.linesep)
                         logFile.flush()
@@ -190,9 +190,9 @@ class iVodDataBaseUpdate(object):
         logFile.write( "----------------------------End Time:"+strftime("%Y-%m-%d %H:%M:%S", time.localtime())+"-------------------------" +os.linesep)
         logFile.flush()
         logFile.close()
-        self.qtStatus.append (u"更新完成")
+        self.qtStatus.append(u"更新完成")
 
-    
+
     
 #    
 #req1 = urllib2.Request(uri)
