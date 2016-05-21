@@ -122,7 +122,7 @@ class iVodDataBaseUpdate(object):
         Full_Result_By_MeetingDate ={}
         MeetingDaylimit =self.MeetingDaylimit
         #log 檔案
-        logFile = open ('./log.txt','a');
+        logFile = open ('./ivod.log','a');
 
         logFile.write("----------------------------Start Time:"+strftime("%Y-%m-%d %H:%M:%S", time.localtime())+"-------------------------" +os.linesep)
         logFile.flush()

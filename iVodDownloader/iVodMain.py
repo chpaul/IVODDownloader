@@ -21,11 +21,11 @@ class iVodMain(QtGui.QWidget):
         # List committee name
         lstCommitteeName = [unicode("院會"), unicode("內政委員會"), unicode("財政委員會"), unicode("司法及法制委員會"), unicode("外交及國防委員會"), unicode("教育及文化委員會"), unicode("社會福利及衛生環境委員會"), unicode("經濟委員會"), unicode("交通委員會"), unicode("程序委員會")]
         app_icon = QtGui.QIcon()
-        app_icon.addFile('./icon/app.png', QtCore.QSize(512, 512))
+        app_icon.addFile('./icons/app.png', QtCore.QSize(512, 512))
         self.setWindowIcon(app_icon)
         # Layout
         self.resize(800, 400)
-        self.setWindowTitle(unicode('iVod 下載器'))
+        self.setWindowTitle(unicode('IVOD 下載器'))
         self.tabs = QtGui.QTabWidget()
 
         self.tabSearch = QtGui.QWidget()        
@@ -113,7 +113,7 @@ class iVodMain(QtGui.QWidget):
 
         downloadButtonLayout = QtGui.QHBoxLayout()
         
-        btnDownload = QtGui.QPushButton("Download")
+        btnDownload = QtGui.QPushButton(unicode("下載"))
         btnDownload.clicked.connect(self.btnDownloand_click)
         downloadButtonLayout.addWidget(btnDownload)
         self.chkHD =QtGui.QCheckBox(unicode("下載高畫質 1M"))
@@ -129,7 +129,7 @@ class iVodMain(QtGui.QWidget):
         self.tabDownloadStatus.setLayout(downloadStatusLayout)
 
         # 資料庫更新tab
-        btnUpdateDB = QtGui.QPushButton('Update Database')
+        btnUpdateDB = QtGui.QPushButton(unicode('更新資料庫'))
         #btnUpdateDB.setObjectName("btnUpdateDB")
         #self.dbLocation = QtGui.QLineEdit()
         #self.dbLocation.setObjectName("dbLocation")
@@ -141,7 +141,7 @@ class iVodMain(QtGui.QWidget):
         dbLayout = QtGui.QGridLayout()
         #dbLayout.addWidget(QtGui.QLabel('Database Location:'), 0, 0)
         #dbLayout.addWidget(self.dbLocation, 0, 1, 1, 3)
-        dbLayout.addWidget(QtGui.QLabel('Update number:'), 1, 0)
+        dbLayout.addWidget(QtGui.QLabel(unicode('更新最新會議數目：')), 1, 0)
         dbLayout.addWidget(self.maxUpdateNumber, 1, 1, 1, 1)
         dbLayout.addWidget(btnUpdateDB, 1, 3)
         dbLayout.addWidget(self.status, 2, 1, 3, 3)
@@ -171,7 +171,7 @@ class iVodMain(QtGui.QWidget):
                 self.cboEndTime.addItem(str(row[0]))
         else:
             self.btnSearch.setEnabled(False)
-            QtGui.QMessageBox.information(self, unicode("錯誤"), unicode("資料庫為空!自動更新最新3次會議"))
+            QtGui.QMessageBox.information(self, unicode("錯誤"), unicode("資料庫為空！自動更新最新3次會議"))
             self.tabs.setCurrentIndex(3)
             dbUpdater = iVodDataBaseUpdate.iVodDataBaseUpdate('./db/iVod_LY.sqlite', 3, self.status)
             dbUpdater.startUpdate()
@@ -185,7 +185,6 @@ class iVodMain(QtGui.QWidget):
 
     # 搜尋按鈕 Event
     def btnSearch_click(self):
-       
         StartTime = str(self.cboStartTime.currentText()) + ' 00:00:00'
         EndTime = str(self.cboEndTime.currentText()) + ' 23:59:59'
         Committees = []
@@ -275,10 +274,10 @@ class iVodMain(QtGui.QWidget):
     # 更新資料庫按鈕 Event 呼叫 iVodDataBaseUpdate
     def btnUpdateDB_click(self):             
         dbUpdater = iVodDataBaseUpdate.iVodDataBaseUpdate('./db/iVod_LY.sqlite', self.maxUpdateNumber.text(), self.status)
-        QtGui.QMessageBox.information(self, unicode('開始更新'), unicode('開始更新最新%s天資料' % str(self.maxUpdateNumber.text())))
+        QtGui.QMessageBox.information(self, unicode('開始更新'), unicode('開始更新最新%s次會議資料' % str(self.maxUpdateNumber.text())))
         dbUpdater.startUpdate()
         QtGui.QMessageBox.information(self, unicode('更新完成'), unicode('OK'))
-        #Refetch data into form
+        # Refetch data into form
         self.SetupDateSearch()
 
     # 建立新資料庫
