@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# 主要Form 包含UI
+# main Form include UI
 from PyQt4 import QtGui, QtCore
 import iVodDataBaseUpdate
 import iVodDataBaseSearch
@@ -21,7 +21,7 @@ class iVodMain(QtGui.QWidget):
         # List committee name
         lstCommitteeName = [unicode("院會"), unicode("內政委員會"), unicode("財政委員會"), unicode("司法及法制委員會"), unicode("外交及國防委員會"), unicode("教育及文化委員會"), unicode("社會福利及衛生環境委員會"), unicode("經濟委員會"), unicode("交通委員會"), unicode("程序委員會")]
         app_icon = QtGui.QIcon()
-        app_icon.addFile('./app.png', QtCore.QSize(512, 512))
+        app_icon.addFile('./icons/app.png', QtCore.QSize(512, 512))
         self.setWindowIcon(app_icon)
         # Layout
         self.resize(800, 400)
@@ -158,7 +158,7 @@ class iVodMain(QtGui.QWidget):
 
     # 讀取資料庫把搜尋的條件填入控制項
     def SetupDateSearch(self):
-        db_con = sqlite3.connect('./iVOD_LY.sqlite')
+        db_con = sqlite3.connect('./db/iVod_LY.sqlite')
         cur = db_con.cursor()                    
         cur.execute("Select Distinct ST_time from (SELECT DISTINCT substr(ST_TIM,1,10) as ST_time FROM iVOD_Lglt union SELECT DISTINCT substr(ST_TIM,1,10) as ST_time FROM iVOD_FullMeeting)order by ST_time DESC")
         MeetingTimeRecord = cur.fetchall()
@@ -173,7 +173,7 @@ class iVodMain(QtGui.QWidget):
             self.btnSearch.setEnabled(False)
             QtGui.QMessageBox.information(self, unicode("錯誤"), unicode("資料庫為空!自動更新最新3次會議"))
             self.tabs.setCurrentIndex(3)
-            dbUpdater = iVodDataBaseUpdate.iVodDataBaseUpdate('./iVod_LY.sqlite', 3, self.status)
+            dbUpdater = iVodDataBaseUpdate.iVodDataBaseUpdate('./db/iVod_LY.sqlite', 3, self.status)
             dbUpdater.startUpdate()
             self.SetupDateSearch()
         db_con.close()
@@ -274,7 +274,7 @@ class iVodMain(QtGui.QWidget):
 
     # 更新資料庫按鈕 Event 呼叫 iVodDataBaseUpdate
     def btnUpdateDB_click(self):             
-        dbUpdater = iVodDataBaseUpdate.iVodDataBaseUpdate('./iVod_LY.sqlite', self.maxUpdateNumber.text(), self.status)
+        dbUpdater = iVodDataBaseUpdate.iVodDataBaseUpdate('./db/iVod_LY.sqlite', self.maxUpdateNumber.text(), self.status)
         QtGui.QMessageBox.information(self, unicode('開始更新'), unicode('開始更新最新%s天資料' % str(self.maxUpdateNumber.text())))
         dbUpdater.startUpdate()
         QtGui.QMessageBox.information(self, unicode('更新完成'), unicode('OK'))
@@ -283,7 +283,7 @@ class iVodMain(QtGui.QWidget):
 
     # 建立新資料庫
     def createNewDatabase(self):
-        db_con = sqlite3.connect('./iVod_LY.sqlite')
+        db_con = sqlite3.connect('./db/iVod_LY.sqlite')
         sql ="""
         PRAGMA foreign_keys = off;
         BEGIN TRANSACTION;

@@ -1,9 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# iVod影片下載handler
+# iVod download handler
 import urllib2, sys, re, os, xml.etree.ElementTree, subprocess as sp
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt4 import QtGui
+from PyQt4 import QtCore
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -13,13 +13,14 @@ sys.setdefaultencoding('utf8')
 # argSaveFolder : str # 下載目錄
 # argHD : boolean # 是否下載高畫質
 # argQTStatus : QTextBrowser # 顯示進度的控制項
-class iVodVideoDownload(QMainWindow):
+
+class iVodVideoDownload(QtGui.QMainWindow):
     def __init__(self, argURLandFileNameList, argSaveFolder, argHD, argQTStatus):
-        e = xml.etree.ElementTree.parse('setting.xml').getroot()
+        e = xml.etree.ElementTree.parse('./config/setting.xml').getroot()
         self.phpExecutionPath = e.findall('phpLocation')[0].text
         if not self.hasPHP(self.phpExecutionPath):
             raise Exception("Can't find PHP; please install PHP and change location above")
-        QWidget.__init__(self)
+        QtGui.QWidget.__init__(self)
         self.SaveFolder = argSaveFolder
         self.QtStatus = argQTStatus
         self.Manifest = []
@@ -68,7 +69,7 @@ class iVodVideoDownload(QMainWindow):
 
             # 更新QT元件
             while self.running:
-                QApplication.processEvents()
+                QtGui.QApplication.processEvents()
 
             # 如果有暫存檔案存在 下載失敗 刪除暫存檔
             if not os.path.isfile(tempFileName):
@@ -87,8 +88,8 @@ class iVodVideoDownload(QMainWindow):
 
     def callAdobeHDS(self, manifestURL, tmpFileLocation):
         self.running = True
-        self.process.start(self.phpExecutionPath,
-                           ["AdobeHDS.php", "--quality", "high", "--useragent", self.header['User-agent'],
+        self.process.start([self.phpExecutionPath,
+                           "../bin/AdobeHDS.php", "--quality", "high", "--useragent", self.header['User-agent'],
                             '--delete', '--outfile', tmpFileLocation, '--manifest',
                             manifestURL])  # , shell=True, stdout=subprocess.PIPE)
 
@@ -117,16 +118,16 @@ class iVodVideoDownload(QMainWindow):
 #     download.downloadFile()
 #
 # def main():
-#     app = QApplication(sys.argv)
+#     app = QtGui.QApplication(sys.argv)
 #     global mainForm
-#     mainForm = QWidget()
+#     mainForm = QtGui.QWidget()
 #     mainForm.resize(800,400)
-#     layout = QVBoxLayout()
-#     edit = QTextBrowser()
+#     layout = QtGui.QVBoxLayout()
+#     edit = QtGui.QTextBrowser()
 #     edit.setObjectName("Status")
 #     edit.setWindowTitle("QTextEdit Standard Output Redirection")
 #     layout.addWidget(edit)
-#     button = QPushButton()
+#     button = QtGui.QPushButton()
 #     button.clicked.connect(button_click)
 #     layout.addWidget(button)
 #     mainForm.setLayout(layout)

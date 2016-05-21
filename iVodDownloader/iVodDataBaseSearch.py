@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#資料庫搜尋
+# search database
 import sys,os.path
 reload(sys)
 sys.setdefaultencoding('utf8')
@@ -18,14 +18,14 @@ class iVodDataBaseSearch(object):
         
 
     def SearchFull(self):
-        db_con = sqlite3.connect('./iVOD_LY.sqlite')
+        db_con = sqlite3.connect('./db/iVod_LY.sqlite')
         CommitteeString = "CM_NAM = \"" + "\" OR CM_NAM = \"".join(self.Committees)+"\""
         
         cur = db_con.cursor()
         cur.execute("SELECT * FROM iVOD_FullMeeting where ST_TIM Between \"" + self.StartTime + "\"  AND \"" + self.EndTime + "\" AND ("  +CommitteeString +") ORDER BY ST_TIM DESC ,CM_NAM ASC")
         return cur.fetchall()
     def SearchIndividual(self):
-        db_con = sqlite3.connect('./iVOD_LY.sqlite')
+        db_con = sqlite3.connect('./db/iVod_LY.sqlite')
         CommitteeString = "CM_NAM = \"" + "\" OR CM_NAM = \"".join(self.Committees)+"\""
         
         cur = db_con.cursor()

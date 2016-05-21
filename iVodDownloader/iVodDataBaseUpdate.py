@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#資料庫更新
+# update database
 import os, urllib, urllib2, json, cookielib, sys, random, time, datetime, subprocess
 import io,os.path,unicodedata,shutil,sqlite3
 from time import gmtime, strftime
 reload(sys)
 sys.setdefaultencoding('utf-8')
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt4 import QtCore
 class iVodDataBaseUpdate(object):
     currect_time =0
     dbLocation = ''
@@ -29,9 +28,9 @@ class iVodDataBaseUpdate(object):
 
     def __init__(self,argDBLocation, argMeetingDaylimit,argQTStatus):
         self.currect_time = 0
-        self.dbLocation =argDBLocation
+        self.dbLocation = argDBLocation
         self.MeetingDaylimit = argMeetingDaylimit
-        self.qtStatus =argQTStatus
+        self.qtStatus = argQTStatus
 
     #http://stackoverflow.com/questions/2677617/python-f-write-at-beginning-of-file
 
@@ -132,7 +131,7 @@ class iVodDataBaseUpdate(object):
         for comit_id in self.committee.keys():
             iVodDataBaseUpdate.reset_cookie()
             self.qtStatus.append(u'開始掃描%s委員會可以抓取的影片...' % self.committee[comit_id]['name'])
-            QCoreApplication.processEvents()
+            QtCore.QCoreApplication.processEvents()
             #print(u'開始掃描%s委員會可以抓取的影片...' % self.committee[comit_id]['name'])
             logFile.write("Check " + self.committee[comit_id]['name']   +os.linesep)
             logFile.flush()
@@ -152,7 +151,7 @@ class iVodDataBaseUpdate(object):
                 movie_list = iVodDataBaseUpdate.get_movie_by_date(comit_id, date, 1)
                 page_num = (int(movie_list['total']) / 5) + 1
                 self.qtStatus.append(date)
-                QCoreApplication.processEvents()
+                QtCore.QCoreApplication.processEvents()
                 #print(date)
                 for i in movie_list['full']:
                     cur = db_con.cursor()
