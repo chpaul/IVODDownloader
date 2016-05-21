@@ -53,10 +53,15 @@ class iVodVideoDownload(QtGui.QMainWindow):
     def downloadFile(self):
         downloadfailed = []
         self.QtStatus.append(unicode('PHP Location:') + self.phpExecutionPath)
+        logFile = open('./ivod.log', 'a')
+        logFile.write("----------------------------Download-------------------------" + os.linesep)
         for manifest in self.Manifest:
             tempFileName = self.SaveFolder + "/tmp.flv"
             FileName = manifest[2]
-
+            logFile.write('Name:' + FileName + os.linesep)
+            logFile.write('URL:' + manifest[0] + os.linesep)
+            logFile.write('Manifest URL:' + manifest[1] + os.linesep)
+            logFile.flush()
             self.running = False
             self.QtStatus.append(unicode('下載檔名:') + FileName)
             self.QtStatus.append(unicode('原始URL:') + manifest[0])
@@ -80,9 +85,15 @@ class iVodVideoDownload(QtGui.QMainWindow):
                 while (os.path.isfile(FileName)):
                     FileName = FileName[0:-4] + "_1.flv"
                 os.rename(tempFileName, FileName)
+                logFile.write(FileName + ' download finish' + os.linesep +os.linesep)
+
         if len(downloadfailed) != 0:
             for s in downloadfailed:
                 self.QtStatus.append(s + u' 下載失敗')
+                logFile.write(s + ' files failed' + os.linesep)
+        logFile.write('----------------------------Download Finish------------------' + os.linesep)
+        logFile.flush()
+        logFile.close()
 
     def callAdobeHDS(self, manifestURL, tmpFileLocation):
         self.running = True
