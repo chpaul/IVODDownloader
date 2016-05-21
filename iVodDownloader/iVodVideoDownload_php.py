@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # iVod download handler
-import urllib2, sys, re, os, xml.etree.ElementTree, subprocess as sp
+import urllib2, sys, re, os, xml.etree.ElementTree
+import subprocess as sp
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 reload(sys)
@@ -81,7 +82,7 @@ class iVodVideoDownload(QtGui.QMainWindow):
                 os.rename(tempFileName, FileName)
         if len(downloadfailed) != 0:
             for s in downloadfailed:
-                self.QtStatus.append(s + u'  download 失敗')
+                self.QtStatus.append(s + u' 下載失敗')
 
     def callAdobeHDS(self, manifestURL, tmpFileLocation):
         self.running = True
