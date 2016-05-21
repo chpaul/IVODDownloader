@@ -23,7 +23,7 @@ https://github.com/K-S-V/Scripts/blob/master/AdobeHDS.php
 - ./icons/ :圖示檔案
 
 #### Windows 使用者
-    php-mcrypt 安裝 [參考連結]()
+    php-mcrypt 安裝 [參考連結](http://php.net/manual/en/install.windows.extensions.php)
      
 1. 下載 [dist/windows/downloader.exe](https://github.com/chpaul/iVodDownloader/raw/master/dist/windows/Downloader.exe)
 2. 下載附加檔案(optional)
