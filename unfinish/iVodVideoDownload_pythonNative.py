@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import urllib2,sys,re,os,subprocess,threading
-from PyQt4.QtGui import * 
-from PyQt4.QtCore import * 
+from PyQt4 QtGui import QtGui, QtCore
 reload(sys)
 sys.setdefaultencoding('utf8')
 import binascii
@@ -540,9 +539,9 @@ class M6(object):
 #    main()
 
 
-class iVodVideoDownload(QProcess):
+class iVodVideoDownload(QtCore.QProcess):
     def __init__(self, argURLandFileNameList, argSaveFolder, argHD,argQTStatus):     
-        QProcess.__init__(self)   
+        QtCore.QProcess.__init__(self)   
         self.SaveFolder = argSaveFolder
         self.QtStatus = argQTStatus
         self.Manifest = []
@@ -570,7 +569,7 @@ class iVodVideoDownload(QProcess):
             #self.QtStatus.append('開始下載' + URLAndFileName[1])
             #run processs
             #self.downloadFile(manifest_url,tempFileName)
-            #os.system('python AdobeHDS.py -u ' +  manifest_url + "  " + tempFileName +" 2" )
+            #os.system('python ../bin/AdobeHDS.py -u ' +  manifest_url + "  " + tempFileName +" 2" )
             #while(os.path.isfile(FileName)):
             #    FileName = FileName[0:-4] + "_1.flv" 
             #os.rename(tempFileName,FileName)   
@@ -609,17 +608,17 @@ def button_click():
 
 def main():     
     #x = M6('http://h264media01.ly.gov.tw:1935/vod/_definst_/mp4:1MClips/93b47c7fc6d6e68bfaecdddf9cc0ad7ff5f26990720e1195111f9f57f751472c5d2e46a5ae096bd4.mp4/manifest.f4m','d:/1985/tmp.flv')
-    app = QApplication(sys.argv)
+    app = QtGui.QApplication(sys.argv)
     global mainForm
-    mainForm = QWidget()
+    mainForm = QtGui.QWidget()
     mainForm.resize(800,400)
-    layout = QVBoxLayout()
+    layout = QtGui.QVBoxLayout()
     
-    edit = QTextBrowser()
+    edit = QtGui.QTextBrowser()
     edit.setObjectName("Status")
     edit.setWindowTitle("QTextEdit Standard Output Redirection")
     layout.addWidget(edit)
-    button = QPushButton()
+    button = QtGui.QPushButton()
     button.clicked.connect(button_click);
     layout.addWidget(button)
     mainForm.setLayout(layout)
