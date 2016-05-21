@@ -45,7 +45,7 @@ class iVodVideoDownload(QtGui.QMainWindow):
             duration_min = float(duration_sec) / 60.0
             tempFileName = argSaveFolder + "/tmp.flv"
             self.Manifest.append([URL, manifest_url, FileName])
-            self.process = QProcess(self)
+            self.process = QtCore.QProcess(self)
             self.process.readyReadStandardOutput.connect(self.dataReady)
             self.process.finished.connect(self.finish)
 
@@ -56,10 +56,7 @@ class iVodVideoDownload(QtGui.QMainWindow):
             tempFileName = self.SaveFolder + "/tmp.flv"
             FileName = manifest[2]
 
-            # xdownload = AdobeHDS.M6(manifest[1],tempFileName)
-
             self.running = False
-
             self.QtStatus.append(unicode('下載檔名:') + FileName)
             self.QtStatus.append(unicode('原始URL:') + manifest[0])
             self.QtStatus.append(unicode('Manifest URL:') + manifest[1])
@@ -88,8 +85,8 @@ class iVodVideoDownload(QtGui.QMainWindow):
 
     def callAdobeHDS(self, manifestURL, tmpFileLocation):
         self.running = True
-        self.process.start([self.phpExecutionPath,
-                           "../bin/AdobeHDS.php", "--quality", "high", "--useragent", self.header['User-agent'],
+        self.process.start(self.phpExecutionPath,
+                           ["./bin/AdobeHDS.php", "--quality", "high", "--useragent", self.header['User-agent'],
                             '--delete', '--outfile', tmpFileLocation, '--manifest',
                             manifestURL])  # , shell=True, stdout=subprocess.PIPE)
 

@@ -21,7 +21,7 @@ class iVodMain(QtGui.QWidget):
         # List committee name
         lstCommitteeName = [unicode("院會"), unicode("內政委員會"), unicode("財政委員會"), unicode("司法及法制委員會"), unicode("外交及國防委員會"), unicode("教育及文化委員會"), unicode("社會福利及衛生環境委員會"), unicode("經濟委員會"), unicode("交通委員會"), unicode("程序委員會")]
         app_icon = QtGui.QIcon()
-        app_icon.addFile('./icons/app.png', QtCore.QSize(512, 512))
+        app_icon.addFile('./icon/app.png', QtCore.QSize(512, 512))
         self.setWindowIcon(app_icon)
         # Layout
         self.resize(800, 400)
@@ -283,6 +283,8 @@ class iVodMain(QtGui.QWidget):
 
     # 建立新資料庫
     def createNewDatabase(self):
+        if not os.path.isdir('./db'):
+            os.makedirs('./db')
         db_con = sqlite3.connect('./db/iVod_LY.sqlite')
         sql ="""
         PRAGMA foreign_keys = off;
