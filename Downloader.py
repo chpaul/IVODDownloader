@@ -3,6 +3,7 @@
 # iVodDownloader entry point
 import sys, ctypes, platform, os, urllib2
 from PyQt4 import QtGui
+os.chdir(os.path.dirname(__file__))
 from iVodDownloader import iVodMain
 
 reload(sys)
