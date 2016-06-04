@@ -1,0 +1,133 @@
+/* 
+pop.pop.star 
+by Timo Wirth
+24th Oct. 05
+http://www.javajim.de 
+*/
+
+.NoNewline
+{
+word-break: keep-all;
+}
+
+table {
+font: 75%/1.5em arial, geneva, sans-serif;
+border-collapse: collapse;
+table-layout: fixed;
+}
+	
+/* headline */
+
+caption {
+margin: 0;
+border-bottom: 4px solid #fff;
+padding: 10px;
+background: #F8F12A;
+text-align: left;
+font: bold 250%/1em arial, geneva, sans-serif;
+color: #000;
+width: 100%;
+text-transform: uppercase;
+letter-spacing: 0.1em;
+width: auto;
+}	
+	
+/* data */
+
+tbody {
+background: #acc;
+}
+tbody td {
+font-size: 100%;
+letter-spacing: 0.05em;
+}
+tbody td, th {
+border-bottom: 4px solid #fff;
+border-left: 1px dotted #fff;
+padding: 5px;
+text-align: center;
+vertical-align: middle ;
+}
+
+/* header */ 
+	
+thead th { /* headers oben */
+/*padding: 5px 10px;*/
+text-align: center;
+vertical-align: middle ;
+background: #DF3985; /* pink */
+color: #fff;
+text-transform: uppercase;
+letter-spacing: 0.2em;
+font-weight: bold;
+font-size: 110%;
+white-space: nowrap;
+}
+
+
+tbody th { 
+padding: 10px 10px 10px 10px;
+text-align: left;
+font-size: 110%;
+color: #fff;
+letter-spacing: 0.1em;
+line-height: 1.5em;
+text-transform: uppercase;
+}	
+
+/* colours */
+
+tbody tr.odd th {
+background: #E6E0C0; 
+}
+tbody tr.odd {
+background: #E6E0C0; 
+}
+
+tbody tr th {
+background: #b6e5ff; 
+}
+tbody tr {
+background: #b6e5ff; 
+}
+
+/* footer */
+
+tfoot th, tfoot td {
+margin: 0;
+border-top: 2px solid #fff;
+padding: 5px 10px;
+text-align: left;
+background: #F8F12A; /* yellow */
+color: #000;
+}
+
+tfoot th {
+text-transform: uppercase;
+letter-spacing: 0.2em;
+border: none;
+}
+
+tfoot td {
+padding-left: 10px;
+}
+	
+/* links */	
+	
+tbody tr th a { /* blue */
+color: #277ffe;
+display: block;
+}
+
+tbody tr.odd th a { /* beige */
+color: #555;
+display: block;
+}	
+	
+tbody td a {
+color: #DF3985;
+}
+
+a:visited, tbody tr.odd th a:visited {
+color: #999;
+}
