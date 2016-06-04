@@ -1,7 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # iVod download handler
-import urllib2, sys, re, os, xml.etree.ElementTree
+import urllib2
+import sys
+import re
+import os
+import xml.etree.ElementTree
 import subprocess as sp
 from PyQt4 import QtGui
 from PyQt4 import QtCore

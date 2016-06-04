@@ -9,7 +9,9 @@ import sqlite3
 import sys
 import webbrowser
 import os
-import threading
+import urllib2
+import re
+
 reload(sys)
 sys.setdefaultencoding('utf8')
 
@@ -30,11 +32,13 @@ class iVodMain(QtGui.QWidget):
 
         self.tabSearch = QtGui.QWidget()        
         self.tabDBUpdate = QtGui.QWidget()        
-        self.tabDownload = QtGui.QWidget()    
+        self.tabDownloadDB = QtGui.QWidget()
+        self.tabDownloadURL = QtGui.QWidget()
         self.tabDownloadStatus = QtGui.QWidget()
         
         self.tabs.addTab(self.tabSearch, unicode("會議查詢"))
-        self.tabs.addTab(self.tabDownload, unicode("影片下載"))
+        self.tabs.addTab(self.tabDownloadDB, unicode("影片下載-資料庫"))
+        self.tabs.addTab(self.tabDownloadURL, unicode("影片下載-iVOD網址"))
         self.tabs.addTab(self.tabDownloadStatus, unicode("影片下載進度"))
         self.tabs.addTab(self.tabDBUpdate, unicode("資料庫更新"))
 
@@ -120,7 +124,22 @@ class iVodMain(QtGui.QWidget):
         self.chkHD.setCheckState(True)
         downloadButtonLayout.addWidget(self.chkHD)
         downloadLayout.addLayout(downloadButtonLayout)
-        self.tabDownload.setLayout(downloadLayout)
+        self.tabDownloadDB.setLayout(downloadLayout)
+
+        # URL 下載tab
+        self.txtiVODURL = QtGui.QTextEdit()
+        lblURLDownload = QtGui.QLabel(unicode("輸入下載網址 (http://ivod.ly.gov.tw/Play/VOD/89626/1M) 可輸入多行"))
+        downloadURLLayout1 = QtGui.QVBoxLayout()
+        downloadURLLayout1.addWidget(lblURLDownload)
+
+        downloadURLLayout2 = QtGui.QHBoxLayout()
+        btnDownloadURL = QtGui.QPushButton(unicode("下載"))
+        btnDownloadURL.clicked.connect(self.btnDownloadURL_click)
+        downloadURLLayout2.addWidget(self.txtiVODURL)
+        downloadURLLayout2.addWidget(btnDownloadURL)
+        downloadURLLayout1.addLayout(downloadURLLayout2)
+        self.tabDownloadURL.setLayout(downloadURLLayout1)
+
 
         # 下載進度tab
         self.txtblkDownloadStatus = QtGui.QTextBrowser()
@@ -227,9 +246,37 @@ class iVodMain(QtGui.QWidget):
             self.FullDataTable.setItem(rowPosition, 4, QtGui.QTableWidgetItem(row[9]))
             self.FullDataTable.setItem(rowPosition, 5, QtGui.QTableWidgetItem("http://ivod.ly.gov.tw/Play/Full/"+str(row[8])+"/300K"))
         self.tabs.setCurrentIndex(1)       
+    def btnDownloadURL_click(self):
+        URLs = str(self.txtiVODURL.toPlainText()).split('\n')
+        names = []
+        for url in URLs:
+            names.append(self.__getNameFromURL(url))
+        selectID =[]
+        for i in range(0, len(names)):
+            selectID.append([URLs[i], names[i]])
 
-    # 下載按鈕 Event 呼叫iVodVideoDownload_php 進行下載
+        folder = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Directory"))
+        self.tabs.setCurrentIndex(3)
+        downlaod = iVodVideoDownload_php.iVodVideoDownload(selectID, folder, self.chkHD.isChecked(),
+                                                           self.txtblkDownloadStatus)
+        downlaod.downloadFile()
+
+
+    def __getNameFromURL(self, url):
+        header = {'User-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36'}
+        html = urllib2.urlopen(urllib2.Request(url, None, header)).read()
+        name = ''
+        committee = re.findall(r"主辦單位 ：.*</h", html)[0][16:-3]
+        date = re.findall(r"會議時間：.*</p", html)[0][24:-9]
+        name = committee + '_' + date
+        if 'Full' not in url:
+            cm = re.findall(r"委員名稱：.*</p", html)[0][24:-3]
+            name = cm + '_' + name
+        name += '.flv'
+        return name.decode('UTF-8')
+
     def btnDownloand_click(self):
+        """下載按鈕 Event 呼叫iVodVideoDownload_php 進行下載 :return: """
         selectID =[] # URL , FileName
         for row in xrange(self.IndividualDataTable.rowCount()):
             if QtGui.QTableWidgetItem(self.IndividualDataTable.item(row, 0)).checkState() == QtCore.Qt.Checked:
@@ -237,10 +284,10 @@ class iVodMain(QtGui.QWidget):
                 selectID.append([str(self.IndividualDataTable.item(row, 7).text()), fileName])
 
         for row in xrange(self.FullDataTable.rowCount()):
-            if QtGui.QTableWidgetItem(self.FullDataTable.item(row,0)).checkState() == QtCore.Qt.Checked:
-                fileName = unicode(self.FullDataTable.item(row,2).text()) + "_" + unicode(self.FullDataTable.item(row, 1).text()) +".flv"
-                selectID.append([str(self.FullDataTable.item(row,5).text()), fileName])
-        reply = QtGui.QMessageBox.question(self, unicode("下載清單"),"\n".join([row[1] for row in selectID]), QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
+            if QtGui.QTableWidgetItem(self.FullDataTable.item(row, 0)).checkState() == QtCore.Qt.Checked:
+                fileName = unicode(self.FullDataTable.item(row, 2).text()) + "_" + unicode(self.FullDataTable.item(row, 1).text()) +".flv"
+                selectID.append([str(self.FullDataTable.item(row, 5).text()), fileName])
+        reply = QtGui.QMessageBox.question(self, unicode("下載清單"), "\n".join([row[1] for row in selectID]), QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
         if reply ==QtGui.QMessageBox.Yes:
             #Clean checkbox
             for row in xrange(self.IndividualDataTable.rowCount()):
@@ -259,7 +306,7 @@ class iVodMain(QtGui.QWidget):
             #Clean QtStatus
             self.txtblkDownloadStatus.setText('')
             folder = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Directory"))
-            self.tabs.setCurrentIndex(2)
+            self.tabs.setCurrentIndex(3)
             downlaod = iVodVideoDownload_php.iVodVideoDownload(selectID, folder, self.chkHD.isChecked(), self.txtblkDownloadStatus)
             downlaod.downloadFile()
 
