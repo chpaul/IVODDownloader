@@ -191,7 +191,7 @@ class iVodMain(QtGui.QWidget):
         else:
             self.btnSearch.setEnabled(False)
             QtGui.QMessageBox.information(self, unicode("錯誤"), unicode("資料庫為空！自動更新最新3次會議"))
-            self.tabs.setCurrentIndex(3)
+            self.tabs.setCurrentIndex(4)
             dbUpdater = iVodDataBaseUpdate.iVodDataBaseUpdate('./db/iVod_LY.sqlite', 3, self.status)
             dbUpdater.startUpdate()
             self.SetupDateSearch()
@@ -250,7 +250,8 @@ class iVodMain(QtGui.QWidget):
         URLs = str(self.txtiVODURL.toPlainText()).split('\n')
         names = []
         for url in URLs:
-            names.append(self.__getNameFromURL(url))
+            if url != '':
+                names.append(self.__getNameFromURL(url))
         selectID =[]
         for i in range(0, len(names)):
             selectID.append([URLs[i], names[i]])
