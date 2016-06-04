@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 # IVODDownloader entry point
-import sys, ctypes, platform, os, urllib2
+import sys
+import ctypes
+import platform
+import os
+import os.path
+import urllib2
 from PyQt4 import QtGui
 if platform.system() !='Windows':
     os.chdir(os.path.dirname(__file__))

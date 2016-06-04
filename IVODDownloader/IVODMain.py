@@ -417,3 +417,11 @@ class IVODMain(QtGui.QWidget):
 
     def handler(msg_type, msg_string, msg_title):
         pass
+
+    def closeEvent(self, event):
+        """Delete temp files"""
+        for path, subdirs, files in os.walk("."):
+            for name in files:
+                if '-Frag' in name:
+                    os.remove(os.path.join(path, name))
+        event.accept()  # let the window close

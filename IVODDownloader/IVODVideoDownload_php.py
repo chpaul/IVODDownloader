@@ -21,6 +21,11 @@ sys.setdefaultencoding('utf8')
 
 class IVODVideoDownload(QtGui.QMainWindow):
     def __init__(self, argURLandFileNameList, argSaveFolder, argHD, argQTStatus):
+        #Clean up the temp
+        for path, subdirs, files in os.walk("."):
+            for name in files:
+                if '-Frag' in name:
+                    os.remove(os.path.join(path, name))
         e = xml.etree.ElementTree.parse('./config/setting.xml').getroot()
         self.phpExecutionPath = e.findall('phpLocation')[0].text
         if not self.hasPHP(self.phpExecutionPath):
