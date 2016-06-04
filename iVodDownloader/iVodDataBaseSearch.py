@@ -6,7 +6,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 import sqlite3
 
-class iVodDataBaseSearch(object):
+class IVODDataBaseSearch(object):
     StartTime =''
     EndTime =''
     Committees=[]
@@ -18,14 +18,14 @@ class iVodDataBaseSearch(object):
         
 
     def SearchFull(self):
-        db_con = sqlite3.connect('./db/iVod_LY.sqlite')
+        db_con = sqlite3.connect('./db/IVOD_LY.sqlite')
         CommitteeString = "CM_NAM = \"" + "\" OR CM_NAM = \"".join(self.Committees)+"\""
         
         cur = db_con.cursor()
         cur.execute("SELECT * FROM iVOD_FullMeeting where ST_TIM Between \"" + self.StartTime + "\"  AND \"" + self.EndTime + "\" AND ("  +CommitteeString +") ORDER BY ST_TIM DESC ,CM_NAM ASC")
         return cur.fetchall()
     def SearchIndividual(self):
-        db_con = sqlite3.connect('./db/iVod_LY.sqlite')
+        db_con = sqlite3.connect('./db/IVOD_LY.sqlite')
         CommitteeString = "CM_NAM = \"" + "\" OR CM_NAM = \"".join(self.Committees)+"\""
         
         cur = db_con.cursor()

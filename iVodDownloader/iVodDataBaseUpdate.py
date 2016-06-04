@@ -7,7 +7,7 @@ from time import gmtime, strftime
 reload(sys)
 sys.setdefaultencoding('utf-8')
 from PyQt4 import QtCore
-class iVodDataBaseUpdate(object):
+class IVODDataBaseUpdate(object):
     currect_time =0
     dbLocation = ''
     MeetingDaylimit = 1
@@ -37,8 +37,8 @@ class iVodDataBaseUpdate(object):
     @staticmethod
     def reset_cookie():
         #if time lagger then 15 min, will reset.
-        if time.time() - iVodDataBaseUpdate.currect_time > 900:
-            iVodDataBaseUpdate.currect_time = time.time()
+        if time.time() - IVODDataBaseUpdate.currect_time > 900:
+            IVODDataBaseUpdate.currect_time = time.time()
             http_header = {'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)', 'Host': 'ivod.ly.gov.tw'}
             req = urllib2.Request('http://ivod.ly.gov.tw/', None, http_header)
             web = urllib2.urlopen(req)
@@ -127,15 +127,15 @@ class iVodDataBaseUpdate(object):
         logFile.write("----------------------------Start Time:"+strftime("%Y-%m-%d %H:%M:%S", time.localtime())+"-------------------------" +os.linesep)
         logFile.flush()
 
-        iVodDataBaseUpdate.reset_cookie()
+        IVODDataBaseUpdate.reset_cookie()
         for comit_id in self.committee.keys():
-            iVodDataBaseUpdate.reset_cookie()
+            IVODDataBaseUpdate.reset_cookie()
             self.qtStatus.append(u'開始掃描%s委員會可以抓取的影片...' % self.committee[comit_id]['name'])
             QtCore.QCoreApplication.processEvents()
             #print(u'開始掃描%s委員會可以抓取的影片...' % self.committee[comit_id]['name'])
             logFile.write("Check " + self.committee[comit_id]['name']   +os.linesep)
             logFile.flush()
-            date_list = iVodDataBaseUpdate.get_committ_date_list(comit_id, None, None)
+            date_list = IVODDataBaseUpdate.get_committ_date_list(comit_id, None, None)
             date_list.sort(reverse=True)
             #for date in date_list:
             #    if(not Full_Result_By_MeetingDate.has_key(date)):
@@ -146,9 +146,9 @@ class iVodDataBaseUpdate(object):
             for dateIdx in range(0,int(MeetingDaylimit)):
                 date = date_list[dateIdx]
 
-                iVodDataBaseUpdate.reset_cookie()
-                iVodDataBaseUpdate.random_sleep()
-                movie_list = iVodDataBaseUpdate.get_movie_by_date(comit_id, date, 1)
+                IVODDataBaseUpdate.reset_cookie()
+                IVODDataBaseUpdate.random_sleep()
+                movie_list = IVODDataBaseUpdate.get_movie_by_date(comit_id, date, 1)
                 page_num = (int(movie_list['total']) / 5) + 1
                 self.qtStatus.append(date)
                 QtCore.QCoreApplication.processEvents()
@@ -164,12 +164,12 @@ class iVodDataBaseUpdate(object):
                     cur.execute("Insert into iVOD_FullMeeting(CM_NAM,DUTION,ENCNAM,HFILEA,HFILEB,LFILEA,LFILEB,MEETID,MEREID,METDEC,MFILEA,MFILEB,RECNAM,ST_TIM,STAGE_) VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",(iVOD_Full))
                     logFile.write("\t- add full " + date + os.linesep)
                     logFile.flush()
-                    iVodDataBaseUpdate.random_sleep()
+                    IVODDataBaseUpdate.random_sleep()
                 db_con.commit()
-                #db_con = sqlite3.connect(iVodDataBaseUpdate.dbLocation)
+                #db_con = sqlite3.connect(IVODDataBaseUpdate.dbLocation)
                 for num in xrange(1, (page_num + 1)):
                     if num != 1:
-                        movie_list = iVodDataBaseUpdate.get_movie_by_date(comit_id, date, num)
+                        movie_list = IVODDataBaseUpdate.get_movie_by_date(comit_id, date, num)
                     for i in movie_list['result']:
                         cur = db_con.cursor()
                         cur.execute("Select * from iVOD_Lglt where WZS_ID=" + i['WZS_ID'])
@@ -184,7 +184,7 @@ class iVodDataBaseUpdate(object):
                         #iVOD_dataList =iVOD_dataList,iVOD_data
                         logFile.write("\t-add personal "+ i['CH_NAM'] + " " + date + os.linesep)
                         logFile.flush()
-                        iVodDataBaseUpdate.random_sleep()
+                        IVODDataBaseUpdate.random_sleep()
                 db_con.commit()
         logFile.write( "----------------------------End Time:"+strftime("%Y-%m-%d %H:%M:%S", time.localtime())+"-------------------------" +os.linesep)
         logFile.flush()

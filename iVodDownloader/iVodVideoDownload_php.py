@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# iVod download handler
+# IVOD download handler
 import urllib2
 import sys
 import re
@@ -19,7 +19,7 @@ sys.setdefaultencoding('utf8')
 # argHD : boolean # 是否下載高畫質
 # argQTStatus : QTextBrowser # 顯示進度的控制項
 
-class iVodVideoDownload(QtGui.QMainWindow):
+class IVODVideoDownload(QtGui.QMainWindow):
     def __init__(self, argURLandFileNameList, argSaveFolder, argHD, argQTStatus):
         e = xml.etree.ElementTree.parse('./config/setting.xml').getroot()
         self.phpExecutionPath = e.findall('phpLocation')[0].text
@@ -127,7 +127,7 @@ class iVodVideoDownload(QtGui.QMainWindow):
 # def button_click():
 #     status = mainForm.findChild(QTextBrowser,"Status");
 #     listURL = [["http://ivod.ly.gov.tw/Play/VOD/76472/300K","test.flv"]]
-#     download = iVodVideoDownload(listURL, "./",True,status)
+#     download = IVODVideoDownload(listURL, "./",True,status)
 #     download.downloadFile()
 #
 # def main():
