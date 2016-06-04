@@ -71,6 +71,11 @@ artifacts/
 *.pidb
 *.svclog
 *.scc
+*.DS_Store
+Thumbs.db
+
+# pycharm
+.idea/
 
 # Chutzpah Test files
 _Chutzpah*
