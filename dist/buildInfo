@@ -1,0 +1,7 @@
+Windows binary use pyInstaller and modified setup.py
+c:\Python27\Scripts\pyinstaller.exe Downloader.spec
+
+
+MAC binary use py2app, and move files into files
+python setup.py py2app
+copy files(setting, icon, AdobeHDS.php, db) into mac application Contents\Recources
