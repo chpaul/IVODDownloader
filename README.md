@@ -5,13 +5,13 @@ Taiwan Legislative Yuan iVod downloader
 *  Binary files are located at ./dist
   
 #### Following files will download automatically  from GitHub if the files are missing
-- [./bin/AdobeHDS.php](https://raw.githubusercontent.com/chpaul/iVodDownloader/5901b505e8981080b5f5ef33afd44d714aa9d8e1/bin/AdobeHDS.php) : download module [Original file] (https://github.com/K-S-V/Scripts/blob/master/AdobeHDS.php)
+- [./bin/AdobeHDS.php](https://raw.githubusercontent.com/chpaul/iVodDownloader/5901b505e8981080b5f5ef33afd44d714aa9d8e1/bin/AdobeHDS.php) : download module [Original file](https://github.com/K-S-V/Scripts/blob/master/AdobeHDS.php)
 - [./db/iVOD_LY.sqlite](https://github.com/chpaul/iVodDownloader/blob/5901b505e8981080b5f5ef33afd44d714aa9d8e1/db/iVOD_LY.sqlite) :database file,download historical database (09/12/2012~5/20/2016) or execute binary file to get empty databse
 - [./config/setting.xml](https://github.com/chpaul/iVodDownloader/tree/master/config) : configuration file for php location
 - ./icons/ : icons
 
 #### Windows user
-php-mcrypt install [ref](http://php.net/manual/en/install.windows.extensions.php)   
+install php-mcrypt [ref](http://php.net/manual/en/install.windows.extensions.php)   
      
 1. download [dist/windows/downloader.exe](https://github.com/chpaul/iVodDownloader/raw/master/dist/windows/Downloader.exe)
 2. download extended files (iVOD_LY.sqlite, setting.xml)(optional)
@@ -19,11 +19,19 @@ php-mcrypt install [ref](http://php.net/manual/en/install.windows.extensions.php
 4. execute Downloader.exe
 
 #### Mac OS user
-php-mcrypt install  
->1. install [homebrew](http://brew.sh/)    
->/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
->2. install mycrypt    
->brew install homebrew/php/php55-mcrypt
+install php-mcrypt  
+
+1. install [homebrew](http://brew.sh/)    
+
+  ```
+  /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+  ```
+
+2. install mycrypt    
+
+  ```
+  brew install homebrew/php/php55-mcrypt
+  ```
 
 1. download  [dist/mac/Downloader.zip](https://github.com/chpaul/iVodDownloader/raw/master/dist/mac/Downloader.zip)
 2. extract files
