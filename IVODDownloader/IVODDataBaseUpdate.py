@@ -23,7 +23,10 @@ class IVODDataBaseUpdate(object):
         '9':{'name': u'交通', 'code': 'TRA'},
         '18':{'name': u'司法及法制', 'code': 'JUD'},
         '12':{'name': u'社會福利及衛生環境', 'code': 'SWE'},
-        '13':{'name': u'程序', 'code': 'PRO'}}
+        '13':{'name': u'程序', 'code': 'PRO'},
+        'other': {'name': u'其他', 'code': 'OTHER'},
+        '15': {'name': u'修憲', 'code': 'OTHER'}}
+
         #'23':{'name': u'紀律', 'code': 'DIS'}}
 
     def __init__(self,argDBLocation, argMeetingDaylimit,argQTStatus):
