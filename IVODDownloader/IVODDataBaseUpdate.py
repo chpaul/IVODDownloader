@@ -25,8 +25,8 @@ class IVODDataBaseUpdate(object):
         '12':{'name': u'社會福利及衛生環境', 'code': 'SWE'},
         '13':{'name': u'程序', 'code': 'PRO'},
         'other': {'name': u'其他', 'code': 'OTHER'},
-        '15': {'name': u'修憲', 'code': 'OTHER'}}
-
+        '15': {'name': u'修憲', 'code': 'CON'}}
+        # https://github.com/g0v/twly_crawler/blob/master/parser/util.json
         #'23':{'name': u'紀律', 'code': 'DIS'}}
 
     def __init__(self,argDBLocation, argMeetingDaylimit,argQTStatus):
