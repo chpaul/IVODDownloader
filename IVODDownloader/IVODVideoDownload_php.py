@@ -7,6 +7,7 @@ import re
 import os
 import xml.etree.ElementTree
 import subprocess as sp
+import urllib2
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 reload(sys)
@@ -72,6 +73,7 @@ class IVODVideoDownload(QtGui.QMainWindow):
             logFile.write('Manifest URL:' + manifest[1] + os.linesep)
             logFile.flush()
             self.running = False
+
             self.QtStatus.append(unicode('下載檔名:') + FileName)
             self.QtStatus.append(unicode('原始URL:') + manifest[0])
             self.QtStatus.append(unicode('Manifest URL:') + manifest[1])
