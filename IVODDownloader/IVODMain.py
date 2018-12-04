@@ -21,7 +21,7 @@ class IVODMain(QtGui.QWidget):
         QtCore.qInstallMsgHandler(self.handler) # Skip QtMessage export to console
 
         # List committee name
-        lstCommitteeName = [unicode("院會"), unicode("內政委員會"), unicode("財政委員會"), unicode("司法及法制委員會"), unicode("外交及國防委員會"), unicode("教育及文化委員會"), unicode("社會福利及衛生環境委員會"), unicode("經濟委員會"), unicode("交通委員會"), unicode("程序委員會")]
+        lstCommitteeName = [unicode("院會"), unicode("內政委員會"),unicode("外交及國防委員會"), unicode("經濟委員會"),unicode("修憲委員會"), unicode("財政委員會"), unicode("教育及文化委員會"), unicode("交通委員會"),unicode("程序委員會"), unicode("司法及法制委員會"),   unicode("社會福利及衛生環境委員會"),   unicode("其他")]
         app_icon = QtGui.QIcon()
         app_icon.addFile('./icons/app.png', QtCore.QSize(512, 512))
         self.setWindowIcon(app_icon)
@@ -58,25 +58,29 @@ class IVODMain(QtGui.QWidget):
         self.chkAllCommittee = QtGui.QCheckBox(unicode("全委員會"))
         self.chkAllCommittee.stateChanged.connect(self.chkAllCommittee_click)        
         Searchlayout.addWidget(self.chkAllCommittee, 2, QtCore.Qt.AlignHCenter)
-        
+
         # 委員會控制項List
         self.lstCheckBoxs = []
         for CoName in lstCommitteeName:
             chkBox = QtGui.QCheckBox(CoName)
             self.lstCheckBoxs.append(chkBox)
-           
+
+        #院會
         CommitteeGridLayout = QtGui.QGridLayout()
-        CommitteeGridLayout.addWidget(self.lstCheckBoxs[0], 2, 0)
+        #CommitteeGridLayout.addWidget(self.lstCheckBoxs[0], 2, 0)
+        #其他
+        #CommitteeGridLayout.addWidget(self.lstCheckBoxs[10], 3, 0)
+
         # 委員會checkbox控制項位置
-        for i in range(1, 10):
+        for i in range(0, len(self.lstCheckBoxs)):
             x = 0
             y = 0
-            if i % 3 == 0:
-                x = i / 3
-                y = 3+1
+            if i % 4 == 0:
+                x = 0
+                y = i / 4
             else:
-                x = (i / 3) + 1
-                y = i % 3 + 1
+                x =  i % 4
+                y = i /4
             CommitteeGridLayout.addWidget(self.lstCheckBoxs[i], x, y)
 
         Searchlayout.addLayout(CommitteeGridLayout)
@@ -214,7 +218,8 @@ class IVODMain(QtGui.QWidget):
         DBSearch = IVODDataBaseSearch.IVODDataBaseSearch(StartTime, EndTime, Committees)
 
         IndividualDataRoes = DBSearch.SearchIndividual()
-        self.IndividualDataTable.cellDoubleClicked.connect(self.cellDataTable_DBclick)    
+        self.IndividualDataTable.cellDoubleClicked.connect(self.cellDataTable_DBclick)
+        self.IndividualDataTable.setRowCount(0);
         for row in IndividualDataRoes:
             rowPosition = self.IndividualDataTable.rowCount()
             chkBoxItem = QtGui.QTableWidgetItem()
@@ -232,6 +237,7 @@ class IVODMain(QtGui.QWidget):
             self.IndividualDataTable.setItem(rowPosition, 7, QtGui.QTableWidgetItem("https://ivod.ly.gov.tw/Play/VOD/" + str(row[0])+"/300K"))
         FullDataRows = DBSearch.SearchFull()   
         self.FullDataTable.cellDoubleClicked.connect(self.cellDataTable_DBclick)
+        self.FullDataTable.setRowCount(0)
         for row in FullDataRows:
             rowPosition = self.FullDataTable.rowCount()
             chkBoxItem = QtGui.QTableWidgetItem()

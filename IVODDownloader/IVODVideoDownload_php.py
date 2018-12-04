@@ -46,12 +46,19 @@ class IVODVideoDownload(QtGui.QMainWindow):
             if URL != '':
                 html = urllib2.urlopen(urllib2.Request(URL, None, self.header), context=ssl.SSLContext(ssl.PROTOCOL_TLSv1)).read()
             # Find RealURL
-            # readyPlayer('https://ivod.ly.gov.tw/public/scripts/','https://h264media01.ly.gov.tw:1935/vod/_definst_/mp4:1MClips/a7d6027a1ded6aa66237e895a7b354309c450e450740cf30da2b760e9327b2fda041cae092e76417.mp4/manifest.f4m');
-            match_readyplayer = re.findall(r"readyPlayer\('.*\)", html)
-
-            manifest_url = re.findall(r",\'.*\)", match_readyplayer[0])[0][2:-2]
-            manifest_html = urllib2.urlopen(urllib2.Request(manifest_url, None, self.header), context=ssl.SSLContext(ssl.PROTOCOL_TLSv1)).read()
-
+            try:
+            # readyPlayer('http://ivod.ly.gov.tw/public/scripts/','http://h264media01.ly.gov.tw:1935/vod/_definst_/mp4:1MClips/a7d6027a1ded6aa66237e895a7b354309c450e450740cf30da2b760e9327b2fda041cae092e76417.mp4/manifest.f4m');
+                match_readyplayer = re.findall(r"readyPlayer\('.*\)", html)
+                manifest_url = re.findall(r",\'.*\)", match_readyplayer[0])[0][2:-2]
+                manifest_html = urllib2.urlopen(urllib2.Request(manifest_url, None, self.header), context=ssl.SSLContext(ssl.PROTOCOL_TLSv1)).read()
+            except urllib2.URLError:
+                #高畫質檔案找不到換回低畫質
+                URL = str(URLAndFileName[0]).replace('1M', '300K')
+                if URL != '':
+                    html = urllib2.urlopen(urllib2.Request(URL, None, self.header)).read()
+                match_readyplayer = re.findall(r"readyPlayer\('.*\)", html)
+                manifest_url = re.findall(r",\'.*\)", match_readyplayer[0])[0][2:-2]
+                manifest_html = urllib2.urlopen(urllib2.Request(manifest_url, None, self.header), context=ssl.SSLContext(ssl.PROTOCOL_TLSv1)).read()
             duration_sec = re.findall(r'<duration>.*<', manifest_html)[0][10:-2]
             duration_min = float(duration_sec) / 60.0
             tempFileName = argSaveFolder + "/tmp.flv"
