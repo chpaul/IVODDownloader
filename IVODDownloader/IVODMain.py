@@ -9,7 +9,7 @@ import sqlite3
 import sys
 import webbrowser
 import os
-import urllib2
+import urllib2, ssl
 import re
 
 reload(sys)
@@ -132,7 +132,7 @@ class IVODMain(QtGui.QWidget):
 
         # URL 下載tab
         self.txtiVODURL = QtGui.QTextEdit()
-        lblURLDownload = QtGui.QLabel(unicode("輸入下載網址 (http://ivod.ly.gov.tw/Play/VOD/89626/1M) 可輸入多行"))
+        lblURLDownload = QtGui.QLabel(unicode("輸入下載網址 (https://ivod.ly.gov.tw/Play/VOD/89626/1M) 可輸入多行"))
         downloadURLLayout1 = QtGui.QVBoxLayout()
         downloadURLLayout1.addWidget(lblURLDownload)
 
@@ -234,7 +234,7 @@ class IVODMain(QtGui.QWidget):
             self.IndividualDataTable.setItem(rowPosition, 4, QtGui.QTableWidgetItem(unicode("第")+str(row[23])+unicode("屆 第") + str(row[6])+unicode("會期")))
             self.IndividualDataTable.setItem(rowPosition, 5, QtGui.QTableWidgetItem(row[1]))
             self.IndividualDataTable.setItem(rowPosition, 6, QtGui.QTableWidgetItem(row[16]))
-            self.IndividualDataTable.setItem(rowPosition, 7, QtGui.QTableWidgetItem("http://ivod.ly.gov.tw/Play/VOD/" + str(row[0])+"/300K"))
+            self.IndividualDataTable.setItem(rowPosition, 7, QtGui.QTableWidgetItem("https://ivod.ly.gov.tw/Play/VOD/" + str(row[0])+"/300K"))
         FullDataRows = DBSearch.SearchFull()   
         self.FullDataTable.cellDoubleClicked.connect(self.cellDataTable_DBclick)
         self.FullDataTable.setRowCount(0)
@@ -250,7 +250,7 @@ class IVODMain(QtGui.QWidget):
             self.FullDataTable.setItem(rowPosition, 2, QtGui.QTableWidgetItem(row[0]))
             self.FullDataTable.setItem(rowPosition, 3, QtGui.QTableWidgetItem(unicode("第")+str(row[14])+unicode("屆 第")+str(row[1])+unicode("會期")))
             self.FullDataTable.setItem(rowPosition, 4, QtGui.QTableWidgetItem(row[9]))
-            self.FullDataTable.setItem(rowPosition, 5, QtGui.QTableWidgetItem("http://ivod.ly.gov.tw/Play/Full/"+str(row[8])+"/300K"))
+            self.FullDataTable.setItem(rowPosition, 5, QtGui.QTableWidgetItem("https://ivod.ly.gov.tw/Play/Full/"+str(row[8])+"/300K"))
         self.tabs.setCurrentIndex(1)       
     def btnDownloadURL_click(self):
         URLs = str(self.txtiVODURL.toPlainText()).split('\n')
@@ -271,7 +271,7 @@ class IVODMain(QtGui.QWidget):
 
     def __getNameFromURL(self, url):
         header = {'User-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36'}
-        html = urllib2.urlopen(urllib2.Request(url, None, header)).read()
+        html = urllib2.urlopen(urllib2.Request(url, None, header), context=ssl.SSLContext(ssl.PROTOCOL_TLSv1)).read()
         name = ''
         committee = re.findall(r"主辦單位 ：.*</h", html)[0][16:-3]
         date = re.findall(r"會議時間：.*</p", html)[0][24:-9]

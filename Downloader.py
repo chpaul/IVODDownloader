@@ -10,7 +10,7 @@ import urllib2
 from PyQt4 import QtGui
 if platform.system() !='Windows':
     os.chdir(os.path.dirname(__file__))
-from IVODDownloader import IVODMain
+from iVodDownloader import IVODMain
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -44,7 +44,7 @@ def main():
     # id AdobeHDS is missing download from github
     if not os.path.isfile('./bin/AdobeHDS.php'):
         QtGui.QMessageBox.information(widget, unicode('AdobeHDS遺失'), unicode('AdobeHDS.php遺失,從GitHub下載中'))
-        f = urllib2.urlopen('https://raw.githubusercontent.com/chpaul/IVODDownloader/master/bin/AdobeHDS.php')
+        f = urllib2.urlopen('https://raw.githubusercontent.com/K-S-V/Scripts/master/AdobeHDS.php')
         if not os.path.isdir('./bin'):
             os.makedirs('./bin')
         with open('./bin/AdobeHDS.php', "wb") as local_file:
