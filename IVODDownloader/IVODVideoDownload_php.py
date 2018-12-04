@@ -7,7 +7,7 @@ import re
 import os
 import xml.etree.ElementTree
 import subprocess as sp
-import urllib2
+import urllib2, ssl
 from PyQt4 import QtGui
 from PyQt4 import QtCore
 reload(sys)
@@ -44,13 +44,13 @@ class IVODVideoDownload(QtGui.QMainWindow):
                 URL = str(URLAndFileName[0]).replace('300K', '1M')
             # 檢查URL然後抓資料
             if URL != '':
-                html = urllib2.urlopen(urllib2.Request(URL, None, self.header)).read()
+                html = urllib2.urlopen(urllib2.Request(URL, None, self.header), context=ssl.SSLContext(ssl.PROTOCOL_TLSv1)).read()
             # Find RealURL
-            # readyPlayer('http://ivod.ly.gov.tw/public/scripts/','http://h264media01.ly.gov.tw:1935/vod/_definst_/mp4:1MClips/a7d6027a1ded6aa66237e895a7b354309c450e450740cf30da2b760e9327b2fda041cae092e76417.mp4/manifest.f4m');
+            # readyPlayer('https://ivod.ly.gov.tw/public/scripts/','https://h264media01.ly.gov.tw:1935/vod/_definst_/mp4:1MClips/a7d6027a1ded6aa66237e895a7b354309c450e450740cf30da2b760e9327b2fda041cae092e76417.mp4/manifest.f4m');
             match_readyplayer = re.findall(r"readyPlayer\('.*\)", html)
 
             manifest_url = re.findall(r",\'.*\)", match_readyplayer[0])[0][2:-2]
-            manifest_html = urllib2.urlopen(urllib2.Request(manifest_url, None, self.header)).read()
+            manifest_html = urllib2.urlopen(urllib2.Request(manifest_url, None, self.header), context=ssl.SSLContext(ssl.PROTOCOL_TLSv1)).read()
 
             duration_sec = re.findall(r'<duration>.*<', manifest_html)[0][10:-2]
             duration_min = float(duration_sec) / 60.0
@@ -133,7 +133,7 @@ class IVODVideoDownload(QtGui.QMainWindow):
 # global mainForm
 # def button_click():
 #     status = mainForm.findChild(QTextBrowser,"Status");
-#     listURL = [["http://ivod.ly.gov.tw/Play/VOD/76472/300K","test.flv"]]
+#     listURL = [["https://ivod.ly.gov.tw/Play/VOD/76472/300K","test.flv"]]
 #     download = IVODVideoDownload(listURL, "./",True,status)
 #     download.downloadFile()
 #

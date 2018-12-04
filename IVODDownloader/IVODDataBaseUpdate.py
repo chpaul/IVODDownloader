@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 # update database
 import os, urllib, urllib2, json, cookielib, sys, random, time, datetime, subprocess
-import io,os.path,unicodedata,shutil,sqlite3
+import io, os.path, unicodedata, shutil, sqlite3, ssl
 from time import gmtime, strftime
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -11,8 +11,8 @@ class IVODDataBaseUpdate(object):
     currect_time =0
     dbLocation = ''
     MeetingDaylimit = 1
-    base_url = 'http://ivod.ly.gov.tw/'
-    committee_url = 'http://ivod.ly.gov.tw/Committee/CommsDate'
+    base_url = 'https://ivod.ly.gov.tw/'
+    committee_url = 'https://ivod.ly.gov.tw/Committee/CommsDate'
     committee ={
         '19':{'name': u'院會', 'code': 'YS'},
         '1':{'name': u'內政', 'code': 'IAD'},
@@ -32,7 +32,7 @@ class IVODDataBaseUpdate(object):
         self.MeetingDaylimit = argMeetingDaylimit
         self.qtStatus = argQTStatus
 
-    #http://stackoverflow.com/questions/2677617/python-f-write-at-beginning-of-file
+    #https://stackoverflow.com/questions/2677617/python-f-write-at-beginning-of-file
 
     @staticmethod
     def reset_cookie():
@@ -40,26 +40,26 @@ class IVODDataBaseUpdate(object):
         if time.time() - IVODDataBaseUpdate.currect_time > 900:
             IVODDataBaseUpdate.currect_time = time.time()
             http_header = {'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)', 'Host': 'ivod.ly.gov.tw'}
-            req = urllib2.Request('http://ivod.ly.gov.tw/', None, http_header)
-            web = urllib2.urlopen(req)
+            req = urllib2.Request('https://ivod.ly.gov.tw/', None, http_header)
+            web = urllib2.urlopen(req, context=ssl.SSLContext(ssl.PROTOCOL_TLSv1))
             result = web.read()
 
     @staticmethod
     def get_committ_date_list(comt, start_date=None, end_date=None):
-        http_header = {'Referer': 'http://ivod.ly.gov.tw/Committee',
+        http_header = {'Referer': 'https://ivod.ly.gov.tw/Committee',
             'Accept': '*/*',
             'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
             'Host': 'ivod.ly.gov.tw',
             'Connection': 'keep-alive',
             'X-Requested-With': 'XMLHttpRequest',
             'Pragma': 'no-cache'}
-        req = urllib2.Request('http://ivod.ly.gov.tw/Committee/CommsDate', urllib.urlencode({'comtid': comt}), http_header)
+        req = urllib2.Request('https://ivod.ly.gov.tw/Committee/CommsDate', urllib.urlencode({'comtid': comt}), http_header)
         #try:
         if not start_date:
             start_date = '2011-01-01'
         if not end_date:
             end_date = datetime.datetime.now().strftime('%Y-%m-%d')
-        web = urllib2.urlopen(req)
+        web = urllib2.urlopen(req, context=ssl.SSLContext(ssl.PROTOCOL_TLSv1))
         if web.getcode() == 200:
             html = web.read()
             #print type(html)
@@ -76,16 +76,16 @@ class IVODDataBaseUpdate(object):
 
     @staticmethod
     def get_movie_by_date(comit, date, page=1):
-        http_header = {'Referer': 'http://ivod.ly.gov.tw/Committee',
+        http_header = {'Referer': 'https://ivod.ly.gov.tw/Committee',
             'Accept': '*/*',
             'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)',
             'Host': 'ivod.ly.gov.tw',
             'Connection': 'keep-alive',
             'X-Requested-With': 'XMLHttpRequest',
             'Pragma': 'no-cache'}
-        req = urllib2.Request('http://ivod.ly.gov.tw/Committee/MovieByDate', urllib.urlencode({'comtid': comit, 'date': date, 'page': page}), http_header)
+        req = urllib2.Request('https://ivod.ly.gov.tw/Committee/MovieByDate', urllib.urlencode({'comtid': comit, 'date': date, 'page': page}), http_header)
         #try:
-        web = urllib2.urlopen(req)
+        web = urllib2.urlopen(req, context=ssl.SSLContext(ssl.PROTOCOL_TLSv1))
         if web.getcode() == 200:
             html_result = web.read()
             html_result = html_result.decode('utf-8-sig')
@@ -105,9 +105,9 @@ class IVODDataBaseUpdate(object):
         else:
             return False
         if quality == 'w':
-            return 'http://ivod.ly.gov.tw/Play/%s/%s/1M' % (url_part, wzs_id)
+            return 'https://ivod.ly.gov.tw://ivod.ly.gov.tw/Play/%s/%s/1M' % (url_part, wzs_id)
         elif quality == 'n':
-            return 'http://ivod.ly.gov.tw/Play/%s/%s/300K' % (url_part, wzs_id)
+            return 'https://ivod.ly.gov.tw/Play/%s/%s/300K' % (url_part, wzs_id)
         else:
             return False
 
@@ -195,13 +195,13 @@ class IVODDataBaseUpdate(object):
     
 #    
 #req1 = urllib2.Request(uri)
-#response = urllib2.urlopen(req1)
+#response = urllib2.urlopen(req1, context=ssl.SSLContext(ssl.PROTOCOL_TLSv1))
 #cookie = response.headers.get('Set-Cookie')
 #
 ## Use the cookie is subsequent requests
-#req2 = urllib2.Request("http://ivod.ly.gov.tw/Legislator#lglt=2644&page=1")
+#req2 = urllib2.Request("https://ivod.ly.gov.tw/Legislator#lglt=2644&page=1")
 #req2.add_header('cookie', cookie)
-#response = urllib2.urlopen(req2)
+#response = urllib2.urlopen(req2, context=ssl.SSLContext(ssl.PROTOCOL_TLSv1))
 #
 #
 #print (response.read())

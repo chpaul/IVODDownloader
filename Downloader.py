@@ -10,7 +10,7 @@ import urllib2
 from PyQt4 import QtGui
 if platform.system() !='Windows':
     os.chdir(os.path.dirname(__file__))
-from IVODDownloader import IVODMain
+from iVodDownloader import IVODMain
 
 reload(sys)
 sys.setdefaultencoding('utf-8')

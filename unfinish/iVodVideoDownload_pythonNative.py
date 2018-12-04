@@ -601,7 +601,7 @@ class iVodVideoDownload(QtCore.QProcess):
 global mainForm
 def button_click():
     status = mainForm.findChild(QTextBrowser,"Status");
-    listURL = [["http://ivod.ly.gov.tw/Play/VOD/88693/1M","test.flv"]]
+    listURL = [["https://ivod.ly.gov.tw/Play/VOD/88693/1M","test.flv"]]
     download = iVodVideoDownload(listURL, "d:/1985/",True,status)
     download.downloadFile()
     
