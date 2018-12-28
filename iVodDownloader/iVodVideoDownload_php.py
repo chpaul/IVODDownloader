@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# IVOD download handler
+# iVod download handler
 import urllib2
 import sys
 import re
@@ -13,14 +13,13 @@ from PyQt4 import QtCore
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-
 # 輸入參數
 # argURLandFileNameList list[str,str] #  下載位置 和 檔名 List[URL,FileName]
 # argSaveFolder : str # 下載目錄
 # argHD : boolean # 是否下載高畫質
 # argQTStatus : QTextBrowser # 顯示進度的控制項
 
-class IVODVideoDownload(QtGui.QMainWindow):
+class iVodVideoDownload(QtGui.QMainWindow):
     def __init__(self, argURLandFileNameList, argSaveFolder, argHD, argQTStatus):
         #Clean up the temp
         for path, subdirs, files in os.walk("."):
@@ -39,29 +38,32 @@ class IVODVideoDownload(QtGui.QMainWindow):
             'User-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36'}
         for URLAndFileName in argURLandFileNameList:
             URL = URLAndFileName[0]
-            FileName = argSaveFolder + "/" + URLAndFileName[1]
+            FileName = os.path.join(argSaveFolder, URLAndFileName[1])
             if argHD:
                 URL = str(URLAndFileName[0]).replace('300K', '1M')
             # 檢查URL然後抓資料
             if URL != '':
-                html = urllib2.urlopen(urllib2.Request(URL, None, self.header), context=ssl.SSLContext(ssl.PROTOCOL_TLSv1)).read()
+                html = urllib2.urlopen(urllib2.Request(URL, None, self.header), context=ssl.SSLContext(ssl.PROTOCOL_TLSv1_2)).read()
             # Find RealURL
             try:
-            # readyPlayer('http://ivod.ly.gov.tw/public/scripts/','http://h264media01.ly.gov.tw:1935/vod/_definst_/mp4:1MClips/a7d6027a1ded6aa66237e895a7b354309c450e450740cf30da2b760e9327b2fda041cae092e76417.mp4/manifest.f4m');
+            # readyPlayer('http://iVod.ly.gov.tw/public/scripts/','http://h264media01.ly.gov.tw:1935/vod/_definst_/mp4:1MClips/a7d6027a1ded6aa66237e895a7b354309c450e450740cf30da2b760e9327b2fda041cae092e76417.mp4/manifest.f4m');
                 match_readyplayer = re.findall(r"readyPlayer\('.*\)", html)
                 manifest_url = re.findall(r",\'.*\)", match_readyplayer[0])[0][2:-2]
-                manifest_html = urllib2.urlopen(urllib2.Request(manifest_url, None, self.header), context=ssl.SSLContext(ssl.PROTOCOL_TLSv1)).read()
+                #h264media01.ly.gov.tw:443  -> ivod-lyvod.cdn.hinet.net
+                #manifest_url = manifest_url.replace('h264media01.ly.gov.tw:443','ivod-lyvod.cdn.hinet.net')
+                #manifest_html = urllib2.urlopen(urllib2.Request(manifest_url, None, self.header), context=ssl.SSLContext(ssl.PROTOCOL_TLSv1)).read()
+                manifest_html = urllib2.urlopen(urllib2.Request(manifest_url, None, self.header), context=ssl.SSLContext(ssl.PROTOCOL_TLS)).read()            
             except urllib2.URLError:
                 #高畫質檔案找不到換回低畫質
                 URL = str(URLAndFileName[0]).replace('1M', '300K')
                 if URL != '':
-                    html = urllib2.urlopen(urllib2.Request(URL, None, self.header)).read()
+                    html = urllib2.urlopen(urllib2.Request(URL, None, self.header), context=ssl.SSLContext(ssl.PROTOCOL_TLS)).read()
                 match_readyplayer = re.findall(r"readyPlayer\('.*\)", html)
                 manifest_url = re.findall(r",\'.*\)", match_readyplayer[0])[0][2:-2]
-                manifest_html = urllib2.urlopen(urllib2.Request(manifest_url, None, self.header), context=ssl.SSLContext(ssl.PROTOCOL_TLSv1)).read()
+                manifest_html = urllib2.urlopen(urllib2.Request(manifest_url, None, self.header), context=ssl.SSLContext(ssl.PROTOCOL_TLS)).read()
             duration_sec = re.findall(r'<duration>.*<', manifest_html)[0][10:-2]
             duration_min = float(duration_sec) / 60.0
-            tempFileName = argSaveFolder + "/tmp.flv"
+            tempFileName = os.path.join(argSaveFolder, "tmp.flv")
             self.Manifest.append([URL, manifest_url, FileName])
             self.process = QtCore.QProcess(self)
             self.process.readyReadStandardOutput.connect(self.dataReady)
@@ -70,10 +72,10 @@ class IVODVideoDownload(QtGui.QMainWindow):
     def downloadFile(self):
         downloadfailed = []
         self.QtStatus.append(unicode('PHP Location:') + self.phpExecutionPath)
-        logFile = open('./ivod.log', 'a')
+        logFile = open('./iVod.log', 'a')
         logFile.write("----------------------------Download-------------------------" + os.linesep)
         for manifest in self.Manifest:
-            tempFileName = self.SaveFolder + "/tmp.flv"
+            tempFileName = os.path.join(self.SaveFolder ,"tmp.flv")
             FileName = manifest[2]
             logFile.write('Name:' + FileName + os.linesep)
             logFile.write('URL:' + manifest[0] + os.linesep)
@@ -140,8 +142,8 @@ class IVODVideoDownload(QtGui.QMainWindow):
 # global mainForm
 # def button_click():
 #     status = mainForm.findChild(QTextBrowser,"Status");
-#     listURL = [["https://ivod.ly.gov.tw/Play/VOD/76472/300K","test.flv"]]
-#     download = IVODVideoDownload(listURL, "./",True,status)
+#     listURL = [["https://iVod.ly.gov.tw/Play/VOD/76472/300K","test.flv"]]
+#     download = iVodVideoDownload(listURL, "./",True,status)
 #     download.downloadFile()
 #
 # def main():

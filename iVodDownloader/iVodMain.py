@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 # main Form include UI
 from PyQt4 import QtGui, QtCore
-import IVODDataBaseUpdate
-import IVODDataBaseSearch
-import IVODVideoDownload_php
+import iVodDataBaseUpdate
+import iVodDataBaseSearch
+import iVodVideoDownload_php
 import sqlite3
 import sys
 import webbrowser
@@ -15,9 +15,9 @@ import re
 reload(sys)
 sys.setdefaultencoding('utf8')
 
-class IVODMain(QtGui.QWidget):
+class iVodMain(QtGui.QWidget):
     def __init__(self, parent=None):
-        super(IVODMain, self).__init__(parent)
+        super(iVodMain, self).__init__(parent)
         QtCore.qInstallMsgHandler(self.handler) # Skip QtMessage export to console
 
         # List committee name
@@ -27,7 +27,7 @@ class IVODMain(QtGui.QWidget):
         self.setWindowIcon(app_icon)
         # Layout
         self.resize(800, 400)
-        self.setWindowTitle(unicode('IVOD 下載器'))
+        self.setWindowTitle(unicode('iVod 下載器'))
         self.tabs = QtGui.QTabWidget()
 
         self.tabSearch = QtGui.QWidget()        
@@ -181,7 +181,7 @@ class IVODMain(QtGui.QWidget):
 
     # 讀取資料庫把搜尋的條件填入控制項
     def SetupDateSearch(self):
-        db_con = sqlite3.connect('./db/IVOD_LY.sqlite')
+        db_con = sqlite3.connect('./db/iVod_LY.sqlite')
         cur = db_con.cursor()                    
         cur.execute("Select Distinct ST_time from (SELECT DISTINCT substr(ST_TIM,1,10) as ST_time FROM iVOD_Lglt union SELECT DISTINCT substr(ST_TIM,1,10) as ST_time FROM iVOD_FullMeeting)order by ST_time DESC")
         MeetingTimeRecord = cur.fetchall()
@@ -196,7 +196,7 @@ class IVODMain(QtGui.QWidget):
             self.btnSearch.setEnabled(False)
             QtGui.QMessageBox.information(self, unicode("錯誤"), unicode("資料庫為空！自動更新最新3次會議"))
             self.tabs.setCurrentIndex(4)
-            dbUpdater = IVODDataBaseUpdate.IVODDataBaseUpdate('./db/IVOD_LY.sqlite', 3, self.status)
+            dbUpdater = iVodDataBaseUpdate.iVodDataBaseUpdate('./db/iVod_LY.sqlite', 3, self.status)
             dbUpdater.startUpdate()
             self.SetupDateSearch()
         db_con.close()
@@ -215,7 +215,7 @@ class IVODMain(QtGui.QWidget):
             if self.lstCheckBoxs[i].isChecked():
                 Committees.append(unicode(self.lstCheckBoxs[i].text()))
 
-        DBSearch = IVODDataBaseSearch.IVODDataBaseSearch(StartTime, EndTime, Committees)
+        DBSearch = iVodDataBaseSearch.iVodDataBaseSearch(StartTime, EndTime, Committees)
 
         IndividualDataRoes = DBSearch.SearchIndividual()
         self.IndividualDataTable.cellDoubleClicked.connect(self.cellDataTable_DBclick)
@@ -264,7 +264,7 @@ class IVODMain(QtGui.QWidget):
 
         folder = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Directory"))
         self.tabs.setCurrentIndex(3)
-        downlaod = IVODVideoDownload_php.IVODVideoDownload(selectID, folder, self.chkHD.isChecked(),
+        downlaod = iVodVideoDownload_php.iVodVideoDownload(selectID, folder, self.chkHD.isChecked(),
                                                            self.txtblkDownloadStatus)
         downlaod.downloadFile()
 
@@ -283,7 +283,7 @@ class IVODMain(QtGui.QWidget):
         return name.decode('UTF-8')
 
     def btnDownloand_click(self):
-        """下載按鈕 Event 呼叫IVODVideoDownload_php 進行下載 :return: """
+        """下載按鈕 Event 呼叫iVodVideoDownload_php 進行下載 :return: """
         selectID =[] # URL , FileName
         for row in xrange(self.IndividualDataTable.rowCount()):
             if QtGui.QTableWidgetItem(self.IndividualDataTable.item(row, 0)).checkState() == QtCore.Qt.Checked:
@@ -292,7 +292,7 @@ class IVODMain(QtGui.QWidget):
 
         for row in xrange(self.FullDataTable.rowCount()):
             if QtGui.QTableWidgetItem(self.FullDataTable.item(row, 0)).checkState() == QtCore.Qt.Checked:
-                fileName = unicode(self.FullDataTable.item(row, 2).text()) + "_" + unicode(self.FullDataTable.item(row, 1).text()) +".flv"
+                fileName = unicode(self.FullDataTable.item(row, 2).text()) + "_" + unicode(self.FullDataTable.item(row, 1).text().replace(':','_')) +".flv"
                 selectID.append([str(self.FullDataTable.item(row, 5).text()), fileName])
         reply = QtGui.QMessageBox.question(self, unicode("下載清單"), "\n".join([row[1] for row in selectID]), QtGui.QMessageBox.Yes,QtGui.QMessageBox.No)
         if reply ==QtGui.QMessageBox.Yes:
@@ -314,10 +314,10 @@ class IVODMain(QtGui.QWidget):
             self.txtblkDownloadStatus.setText('')
             folder = str(QtGui.QFileDialog.getExistingDirectory(self, "Select Directory"))
             self.tabs.setCurrentIndex(3)
-            downlaod = IVODVideoDownload_php.IVODVideoDownload(selectID, folder, self.chkHD.isChecked(), self.txtblkDownloadStatus)
+            downlaod = iVodVideoDownload_php.iVodVideoDownload(selectID, folder, self.chkHD.isChecked(), self.txtblkDownloadStatus)
             downlaod.downloadFile()
 
-    # 雙擊data table 直接開啟瀏覽器到IVOD網站
+    # 雙擊data table 直接開啟瀏覽器到iVod網站
     def cellDataTable_DBclick(self,row,column):        
         if (self.sender() == self.FullDataTable):
             url = self.FullDataTable.item(row, 5).text()
@@ -325,9 +325,9 @@ class IVODMain(QtGui.QWidget):
             url = self.IndividualDataTable.item(row, 7).text()
         webbrowser.open_new(url)
 
-    # 更新資料庫按鈕 Event 呼叫 IVODDataBaseUpdate
+    # 更新資料庫按鈕 Event 呼叫 iVodDataBaseUpdate
     def btnUpdateDB_click(self):             
-        dbUpdater = IVODDataBaseUpdate.IVODDataBaseUpdate('./db/IVOD_LY.sqlite', self.maxUpdateNumber.text(), self.status)
+        dbUpdater = iVodDataBaseUpdate.iVodDataBaseUpdate('./db/iVod_LY.sqlite', self.maxUpdateNumber.text(), self.status)
         QtGui.QMessageBox.information(self, unicode('開始更新'), unicode('開始更新最新%s次會議資料' % str(self.maxUpdateNumber.text())))
         dbUpdater.startUpdate()
         QtGui.QMessageBox.information(self, unicode('更新完成'), unicode('OK'))
@@ -338,7 +338,7 @@ class IVODMain(QtGui.QWidget):
     def createNewDatabase(self):
         if not os.path.isdir('./db'):
             os.makedirs('./db')
-        db_con = sqlite3.connect('./db/IVOD_LY.sqlite')
+        db_con = sqlite3.connect('./db/iVod_LY.sqlite')
         sql ="""
         PRAGMA foreign_keys = off;
         BEGIN TRANSACTION;

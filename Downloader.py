@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-# IVODDownloader entry point
+# iVodDownloader entry point
 import sys
 import ctypes
 import platform
@@ -10,7 +10,7 @@ import urllib2
 from PyQt4 import QtGui
 if platform.system() !='Windows':
     os.chdir(os.path.dirname(__file__))
-from iVodDownloader import IVODMain
+from iVodDownloader import iVodMain
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
@@ -22,12 +22,12 @@ def main():
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
     app = QtGui.QApplication(sys.argv)
 
-    widget = IVODMain.IVODMain()
+    widget = iVodMain.iVodMain()
 
     # 找不到icon
     if not os.path.isfile('./icons/app.png'):
         QtGui.QMessageBox.information(widget, unicode('Icon遺失'), unicode('Icon遺失 從GitHub下載中'))
-        f = urllib2.urlopen('https://raw.githubusercontent.com/chpaul/IVODDownloader/master/icons/app.png')
+        f = urllib2.urlopen('https://raw.githubusercontent.com/chpaul/iVodDownloader/master/icons/app.png')
         if not os.path.isdir('./icons'):
             os.makedirs('./icons')
         with open('./icons/app.png', "wb") as local_file:
@@ -35,8 +35,8 @@ def main():
     widget.__init__()
 
     # 找不到資料庫
-    if not (os.path.isfile('./db/IVOD_LY.sqlite')):
-        QtGui.QMessageBox.information(widget, unicode('資料庫遺失'), unicode('自動產生空白資料庫 IVOD_LY.sqlite'))
+    if not (os.path.isfile('./db/iVod_LY.sqlite')):
+        QtGui.QMessageBox.information(widget, unicode('資料庫遺失'), unicode('自動產生空白資料庫 iVod_LY.sqlite'))
         if not os.path.isdir('./db'):
             os.makedirs('./db')
         widget.createNewDatabase()
@@ -54,9 +54,9 @@ def main():
     if not os.path.isfile('./config/setting.xml'):
         QtGui.QMessageBox.information(widget, unicode('setting.xml遺失'), unicode('setting.xml遺失,從GitHub下載中;請自行更改php路徑'))
         if platform.system() =='Windows':
-            f = urllib2.urlopen('https://raw.githubusercontent.com/chpaul/IVODDownloader/master/config/windows_setting.xml')
+            f = urllib2.urlopen('https://raw.githubusercontent.com/chpaul/iVodDownloader/master/config/windows_setting.xml')
         else:
-            f = urllib2.urlopen('https://raw.githubusercontent.com/chpaul/IVODDownloader/master/config/unix_setting.xml')
+            f = urllib2.urlopen('https://raw.githubusercontent.com/chpaul/iVodDownloader/master/config/unix_setting.xml')
         if not os.path.isdir('./config'):
                 os.makedirs('./config')
         with open('./config/setting.xml', "wb") as local_file:
