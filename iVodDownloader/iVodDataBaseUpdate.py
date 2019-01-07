@@ -1,12 +1,15 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 # update database
-import os, urllib, urllib2, json, cookielib, sys, random, time, datetime, subprocess
-import io, os.path, unicodedata, shutil, sqlite3, ssl
+import os, json, random, time, datetime
+import os.path, sqlite3, ssl
 from time import gmtime, strftime
-reload(sys)
-sys.setdefaultencoding('utf-8')
-from PyQt4 import QtCore
+from urllib.request import urlopen
+from urllib.request import Request
+from urllib.parse import urlencode
+from PyQt5 import QtCore
+from math import ceil
+
 class iVodDataBaseUpdate(object):
     currect_time =0
     dbLocation = ''
@@ -43,8 +46,8 @@ class iVodDataBaseUpdate(object):
         if time.time() - iVodDataBaseUpdate.currect_time > 900:
             iVodDataBaseUpdate.currect_time = time.time()
             http_header = {'User-Agent': 'Mozilla/4.0 (compatible; MSIE 5.5; Windows NT)', 'Host': 'iVod.ly.gov.tw'}
-            req = urllib2.Request('https://iVod.ly.gov.tw/', None, http_header)
-            web = urllib2.urlopen(req, context=ssl.SSLContext(ssl.PROTOCOL_TLSv1))
+            req = Request('https://iVod.ly.gov.tw/', None, http_header)
+            web = urlopen(req, context=ssl.SSLContext(ssl.PROTOCOL_TLS))
             result = web.read()
 
     @staticmethod
@@ -56,13 +59,13 @@ class iVodDataBaseUpdate(object):
             'Connection': 'keep-alive',
             'X-Requested-With': 'XMLHttpRequest',
             'Pragma': 'no-cache'}
-        req = urllib2.Request('https://iVod.ly.gov.tw/Committee/CommsDate', urllib.urlencode({'comtid': comt}), http_header)
+        req = Request('https://iVod.ly.gov.tw/Committee/CommsDate', urlencode({'comtid': comt}).encode("utf-8"), http_header)
         #try:
         if not start_date:
             start_date = '2011-01-01'
         if not end_date:
             end_date = datetime.datetime.now().strftime('%Y-%m-%d')
-        web = urllib2.urlopen(req, context=ssl.SSLContext(ssl.PROTOCOL_TLSv1))
+        web = urlopen(req, context=ssl.SSLContext(ssl.PROTOCOL_TLS))
         if web.getcode() == 200:
             html = web.read()
             #print type(html)
@@ -86,9 +89,9 @@ class iVodDataBaseUpdate(object):
             'Connection': 'keep-alive',
             'X-Requested-With': 'XMLHttpRequest',
             'Pragma': 'no-cache'}
-        req = urllib2.Request('https://iVod.ly.gov.tw/Committee/MovieByDate', urllib.urlencode({'comtid': comit, 'date': date, 'page': page}), http_header)
+        req = Request('https://iVod.ly.gov.tw/Committee/MovieByDate', urlencode({'comtid': comit, 'date': date, 'page': page}).encode("utf-8"), http_header)
         #try:
-        web = urllib2.urlopen(req, context=ssl.SSLContext(ssl.PROTOCOL_TLSv1))
+        web = urlopen(req, context=ssl.SSLContext(ssl.PROTOCOL_TLS))
         if web.getcode() == 200:
             html_result = web.read()
             html_result = html_result.decode('utf-8-sig')
@@ -125,7 +128,7 @@ class iVodDataBaseUpdate(object):
         Full_Result_By_MeetingDate ={}
         MeetingDaylimit =self.MeetingDaylimit
         #log 檔案
-        logFile = open ('./iVod.log','a')
+        logFile = open ('./iVod.log', 'a', encoding="utf-8")
 
         logFile.write("----------------------------Start Time:"+strftime("%Y-%m-%d %H:%M:%S", time.localtime())+"-------------------------" +os.linesep)
         logFile.flush()
@@ -136,7 +139,7 @@ class iVodDataBaseUpdate(object):
             self.qtStatus.append(u'開始掃描%s委員會可以抓取的影片...' % self.committee[comit_id]['name'])
             QtCore.QCoreApplication.processEvents()
             #print(u'開始掃描%s委員會可以抓取的影片...' % self.committee[comit_id]['name'])
-            logFile.write("Check " + self.committee[comit_id]['name']   +os.linesep)
+            logFile.write("Check " + self.committee[comit_id]['name'] + os.linesep)
             logFile.flush()
             date_list = iVodDataBaseUpdate.get_committ_date_list(comit_id, None, None)
             date_list.sort(reverse=True)
@@ -146,13 +149,13 @@ class iVodDataBaseUpdate(object):
             #        List_MeetingDate.append(date)
 
             #for dateIdx in range(0,len(date_list)):#抓全部
-            for dateIdx in range(0,int(MeetingDaylimit)):
+            for dateIdx in range(0, int(MeetingDaylimit)):
                 date = date_list[dateIdx]
 
                 iVodDataBaseUpdate.reset_cookie()
                 iVodDataBaseUpdate.random_sleep()
                 movie_list = iVodDataBaseUpdate.get_movie_by_date(comit_id, date, 1)
-                page_num = (int(movie_list['total']) / 5) + 1
+                page_num = ceil(int(movie_list['total']) / 5)
                 self.qtStatus.append(date)
                 QtCore.QCoreApplication.processEvents()
                 #print(date)
@@ -170,7 +173,7 @@ class iVodDataBaseUpdate(object):
                     iVodDataBaseUpdate.random_sleep()
                 db_con.commit()
                 #db_con = sqlite3.connect(iVodDataBaseUpdate.dbLocation)
-                for num in xrange(1, (page_num + 1)):
+                for num in range(1, (page_num + 1)):
                     if num != 1:
                         movie_list = iVodDataBaseUpdate.get_movie_by_date(comit_id, date, num)
                     for i in movie_list['result']:
